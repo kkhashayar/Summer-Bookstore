@@ -8,3 +8,5 @@ public class Author
     // Navigation Property
     public ICollection<Book> Books { get; set; } = new List<Book>();
 }
+
+//I use ICollection<T> over List<T> because: EF works with interfaces, not concrete types.
