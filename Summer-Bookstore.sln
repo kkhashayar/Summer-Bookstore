@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36127.28 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-API", "Summer-Bookstore\Summer-Bookstore-API.csproj", "{42BCA6D9-0D33-4E02-A773-B600140DE030}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-Domain", "Summer-Bookstore-Domain\Summer-Bookstore-Domain.csproj", "{89A0161F-8E32-4AAD-92A6-EF6FC7E765FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{42BCA6D9-0D33-4E02-A773-B600140DE030}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42BCA6D9-0D33-4E02-A773-B600140DE030}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42BCA6D9-0D33-4E02-A773-B600140DE030}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89A0161F-8E32-4AAD-92A6-EF6FC7E765FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89A0161F-8E32-4AAD-92A6-EF6FC7E765FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89A0161F-8E32-4AAD-92A6-EF6FC7E765FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89A0161F-8E32-4AAD-92A6-EF6FC7E765FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
