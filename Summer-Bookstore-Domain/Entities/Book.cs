@@ -1,6 +1,4 @@
-﻿
-
-namespace Summer_Bookstore_Domain.Entities;
+﻿namespace Summer_Bookstore_Domain.Entities;
 
 public class Book
 {
