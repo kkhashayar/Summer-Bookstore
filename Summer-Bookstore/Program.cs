@@ -1,6 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Summer_Bookstore_Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Registering db context
+builder.Services.AddDbContext<BookstoreDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddControllers();
 
