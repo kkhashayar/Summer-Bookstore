@@ -8,7 +8,7 @@ public interface IBookRepository
     Task<Book> GetByTitle(string title);
     Task<List<Book>> GetAllBooks();
     Task Add(Book book);
-    Task<int> Update(Book);
+    Task<int> Update(Book book);
     Task<int> Delete(int id);
     Task<int> SaveChangesAsync();
 }
