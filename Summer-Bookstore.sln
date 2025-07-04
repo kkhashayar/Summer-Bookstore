@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36127.28 d17.14
+VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-API", "Summer-Bookstore\Summer-Bookstore-API.csproj", "{42BCA6D9-0D33-4E02-A773-B600140DE030}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-Domain", "Summer-Bookstore-Domain\Summer-Bookstore-Domain.csproj", "{89A0161F-8E32-4AAD-92A6-EF6FC7E765FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bokkstore-Infrastructure", "Summer-Bokkstore-Infrastructure\Summer-Bokkstore-Infrastructure.csproj", "{E0956E4E-9C41-46D8-8E65-C44585FCB34F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-Infrastructure", "Summer-Bokkstore-Infrastructure\Summer-Bookstore-Infrastructure.csproj", "{E0956E4E-9C41-46D8-8E65-C44585FCB34F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
