@@ -13,6 +13,11 @@ builder.Services.AddDbContext<BookstoreDbContext>(options =>
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 
+// Registering UnitOfWork
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Controllers asnd swagger 
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
