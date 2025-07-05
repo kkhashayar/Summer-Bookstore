@@ -7,8 +7,8 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly BookstoreDbContext _context;
 
-    public IBookRepository _BookRepository { get; }
-    public IAuthorRepository _AuthorRepository { get; }
+    public IBookRepository BookRepository { get; }
+    public IAuthorRepository AuthorRepository { get; }
 
 
 
@@ -17,8 +17,8 @@ public class UnitOfWork : IUnitOfWork
                       IAuthorRepository authorRepository)
     {
         _context = context;
-        _BookRepository = bookRepository;
-        _AuthorRepository = authorRepository;
+        BookRepository = bookRepository;
+        AuthorRepository = authorRepository;
     }
 
     public async Task<int> CompleteAsync()
