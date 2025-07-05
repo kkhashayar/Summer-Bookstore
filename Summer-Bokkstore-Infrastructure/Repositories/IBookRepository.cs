@@ -4,10 +4,10 @@ namespace Summer_Bokkstore_Infrastructure.Interfaces;
 
 public interface IBookRepository
 {
-    Task<Book> GetById(int id);
-    Task<Book> GetByTitle(string title);
-    Task<List<Book>> GetAllBooks();
-    Task Add(Book book);
+    Task<Book> GetByIdAsync(int id);
+    Task<Book> GetByTitleAsync(string title);
+    Task<List<Book>> GetAllBooksAsync();
+    Task AddAsync(Book book);
     Task<int> Update(Book book);
     Task<int> Delete(int id);
     Task<int> SaveChangesAsync();

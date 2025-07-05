@@ -21,7 +21,7 @@ public class BookRepository : IBookRepository
     // We could add a flag like `bool includeAuthor` and use it to conditionally include the author.
     // Leaving it out for the sake of simplicity for now.
 
-    public async Task<Book> GetById(int id)
+    public async Task<Book> GetByIdAsync(int id)
     {
         var result = await _bookContext.Books.FindAsync(id);    
         if (result == null)
@@ -32,7 +32,7 @@ public class BookRepository : IBookRepository
         return result; 
     }
 
-    public async Task<Book> GetByTitle(string title)
+    public async Task<Book> GetByTitleAsync(string title)
     {
         var result = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == title);
         if(result == null)
@@ -43,7 +43,7 @@ public class BookRepository : IBookRepository
         return result;
     }
 
-    public async Task<List<Book>> GetAllBooks()
+    public async Task<List<Book>> GetAllBooksAsync()
     {
         var result = await _bookContext.Books.ToListAsync();
         if (result.Count == 0)
@@ -56,7 +56,7 @@ public class BookRepository : IBookRepository
 
     // Add method should check 1) If the book already exists before adding it. 
     // Add method should add new Author in case the author does not exist.  
-    public Task Add(Book book)
+    public Task AddAsync(Book book)
     {
         throw new NotImplementedException();
     }
