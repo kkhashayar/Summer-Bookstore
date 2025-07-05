@@ -1,23 +1,62 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore_Domain.Entities;
+using Summer_Bookstore_Infrastructure.Data;
 
 namespace Summer_Bookstore_Infrastructure.Repositories;
 
 public class BookRepository : IBookRepository
 {
 
-    public Task<Book> GetById(int id)
+    private readonly BookstoreDbContext _bookContext;
+    private readonly ILogger<BookRepository> _logger;
+    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger)
     {
-        throw new NotImplementedException();
+        _bookContext = bookContext; 
+        _logger = logger;   
+    }
+    // One thing to consider is whether or not we should include author information.
+    // We could add a flag like `bool includeAuthor` and use it to conditionally include the author.
+    // Leaving it out for the sake of simplicity for now.
+
+    public async Task<Book> GetByIdAsync(int id)
+    {
+        var result = await _bookContext.Books.FindAsync(id);    
+        if (result == null)
+        {
+            _logger.LogWarning($"Book with ID {id} not found at: {DateTime.Now}.");
+            return result; // This will return null if not found, which is fine for this case.
+        }
+        return result; 
     }
 
-    public Task<Book> GetByTitle(string title)
+    public async Task<Book> GetByTitleAsync(string title)
     {
-        throw new NotImplementedException();
+        var result = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == title);
+        if(result == null)
+        {
+            _logger.LogWarning($"Book with title '{title}' not found at: {DateTime.Now}.");
+            return result; // This will return null if not found, which is fine for this case.
+        }   
+        return result;
     }
 
-    public Task Add(Book book)
+    public async Task<List<Book>> GetAllBooksAsync()
+    {
+        var result = await _bookContext.Books.ToListAsync();
+        if (result.Count == 0)
+        {
+            _logger.LogInformation($"The book list empty at: {DateTime.Now}");
+            return new List<Book>(); // Return an empty list if no books are found  
+        }
+        return result;  
+    }
+
+    // Add method should check 1) If the book already exists before adding it. 
+    // Add method should add new Author in case the author does not exist.  
+    public Task AddAsync(Book book)
     {
         throw new NotImplementedException();
     }
@@ -30,10 +69,7 @@ public class BookRepository : IBookRepository
         throw new NotImplementedException();
     }
 
-    public Task<List<Book>> GetAllBooks()
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public Task<int> SaveChangesAsync()
     {
