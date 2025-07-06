@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Summer_Bookstore.Controllers;
@@ -50,5 +51,22 @@ public class Books : ControllerBase
             return NotFound("No books found.");
         }
         return Ok(books);
+    }
+
+    [HttpPost("Add")]
+    public async Task<IActionResult> AddNewBook([FromBody] Book book)
+    {
+        if (book == null)
+        {
+            // I will change this with proper object validation later 
+            _logger.LogWarning("Received null book object at: {DateTime.Now}.");
+            return BadRequest("Book object cannot be null.");
+        }
+
+        await _unitOfWork.BookRepository.AddAsync(book);
+        await _unitOfWork.CompleteAsync();
+        _logger.LogInformation($"Book '{book.Title}' added successfully at: {DateTime.Now}.");
+
+        return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
     }
 }
