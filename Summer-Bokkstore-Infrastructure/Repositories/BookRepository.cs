@@ -62,17 +62,36 @@ public class BookRepository : IBookRepository
     // Initially I went with Unit of work but I think it would be overkill for this simple repository pattern.
     public async Task<int> AddAsync(Book book)
     {
-        var exisitngBook = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
-        if (exisitngBook is not null)
+        // I will move this validation to the controller later.
+        if (book is null) throw new ArgumentNullException(nameof(book), "Book object cannot be null.");
+
+        // Same for author name validation
+        var authorName = book.Author?.Name?.Trim();
+        if (string.IsNullOrWhiteSpace(authorName))
+            throw new InvalidOperationException("AuthorName is required.");
+
+        // check if exact book with same author name is already exists.
+        var existingBook = await _bookContext.Books .FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
+
+        if (existingBook != null)
         {
-            _logger.LogWarning($"Book {book.Title} is already in the system");
-            return 0; // Return 0 or some indication that the book already exists
+            _logger.LogWarning($"Book with title '{book.Title}' and author '{authorName}' already exists at: {DateTime.Now}.");
+            return 0; // Return 0 or some indication that no new book was added
         }
-        
-        
-        await _bookContext.Books.AddAsync(book);        
-        // This will return the number of affected rows, which should be 1 if the book was added successfully 1,2
-        return await SaveChangesAsync(); 
+
+        /********************************************************************/ 
+        // Author check, find or create
+        var author = await _bookContext.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
+        if (author is null)
+        {
+            author = book.Author;
+            await _bookContext.Authors.AddAsync(author); // Add author if not exists
+            await _bookContext.SaveChangesAsync(); // Save changes to ensure author is added    
+        }
+        book.AuthorId = author.Id; // Set the AuthorId for the book
+
+        await _bookContext.Books.AddAsync(book); // Add the book to the context
+        return await _bookContext.SaveChangesAsync(); // Save changes to the database   
     }
 
 
