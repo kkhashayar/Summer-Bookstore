@@ -11,7 +11,6 @@ public class Book
     [DataType(DataType.Date)] // Has no effect on how it stored in Database
     public DateTime PublishedDate { get; set; }
 
-    public string Name { get; set; } = string.Empty;    
     // Foreign Key  
     public int AuthorId { get; set; }
 

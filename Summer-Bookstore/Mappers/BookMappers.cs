@@ -9,8 +9,12 @@ public class BookMappers : Profile
     public BookMappers()
     {
         CreateMap<BookCreateDto, Book>()
-            .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate.ToDateTime(TimeOnly.MinValue))) // Convert DateOnly to DateTime
+            .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate.ToDateTime(TimeOnly.MinValue)))
+            .ForPath(dest => dest.Author.Name, opt => opt.MapFrom(src => src.AuthorName))
+
             .ReverseMap()
-            .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.PublishedDate))); // Convert DateTime to DateOnly
+            .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.PublishedDate)))
+            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author!.Name));
+
     }
 }

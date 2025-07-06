@@ -9,16 +9,15 @@ namespace Summer_Bookstore.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class Books : ControllerBase
+public class BooksController : ControllerBase
 {
-    readonly ILogger<Books> _logger;
+    readonly ILogger<BooksController> _logger;
     readonly IMapper _mapper;
     readonly IBookRepository _bookRepository;
-    readonly IUnitOfWork _unitOfWork;
-    public Books(IUnitOfWork unitOfWork,IBookRepository bookRepository,ILogger<Books> logger, IMapper mapper)
+   
+    public BooksController(IBookRepository bookRepository,ILogger<BooksController> logger, IMapper mapper)
     {
         _bookRepository = bookRepository;
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
        
@@ -76,7 +75,7 @@ public class Books : ControllerBase
 
         }
 
-        var response = await _unitOfWork.TryAddBookWithAuthorAsync(book, book.Author);
+        var response = await _bookRepository.AddAsync(book);
         return Ok(); 
     }
 }

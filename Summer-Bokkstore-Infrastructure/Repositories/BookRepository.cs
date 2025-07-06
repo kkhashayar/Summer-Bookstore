@@ -59,6 +59,7 @@ public class BookRepository : IBookRepository
 
     // Add method should check 1) If the book already exists before adding it. 
     // Add method should add new Author in case the author does not exist.  
+    // Initially I went with Unit of work but I think it would be overkill for this simple repository pattern.
     public async Task<int> AddAsync(Book book)
     {
         var exisitngBook = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
@@ -68,7 +69,7 @@ public class BookRepository : IBookRepository
             return 0; // Return 0 or some indication that the book already exists
         }
         
-
+        
         await _bookContext.Books.AddAsync(book);        
         // This will return the number of affected rows, which should be 1 if the book was added successfully 1,2
         return await SaveChangesAsync(); 

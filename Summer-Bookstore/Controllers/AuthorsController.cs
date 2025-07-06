@@ -5,16 +5,16 @@ namespace Summer_Bookstore.Controllers;
 
 [ApiController] 
 [Route("api/[controller]")]
-public class Authors : ControllerBase
+public class AuthorsController : ControllerBase
 {
-    readonly IUnitOfWork _unitOfWork;
-    readonly ILogger<Authors> _logger;
+   
+    readonly ILogger<AuthorsController> _logger;
     readonly IAuthorRepository _authorRepository;
-    public Authors(IUnitOfWork unitOfWork, IAuthorRepository authorRepository, ILogger<Authors> logger)
+    public AuthorsController(IAuthorRepository authorRepository, ILogger<AuthorsController> logger)
     {
         _authorRepository = authorRepository;
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        
     }
 
 
@@ -53,6 +53,4 @@ public class Authors : ControllerBase
         }
         return Ok(authors);
     }
-
-
 }
