@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Summer_Bookstore_Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Summer_Bookstore_Infrastructure.Data;
 namespace Summer_Bookstore_Infrastructure.Migrations
 {
     [DbContext(typeof(BookstoreDbContext))]
-    partial class BookstoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706090438_Update_PublishedDate_From_DateTime_To_Only_Date")]
+    partial class Update_PublishedDate_From_DateTime_To_Only_Date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,10 +73,6 @@ namespace Summer_Bookstore_Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("PublishedDate")
                         .HasColumnType("date");
 
@@ -92,7 +91,6 @@ namespace Summer_Bookstore_Infrastructure.Migrations
                         {
                             Id = 1,
                             AuthorId = 1,
-                            Name = "",
                             PublishedDate = new DateTime(1949, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "1984"
                         },
@@ -100,7 +98,6 @@ namespace Summer_Bookstore_Infrastructure.Migrations
                         {
                             Id = 2,
                             AuthorId = 2,
-                            Name = "",
                             PublishedDate = new DateTime(1813, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Pride and Prejudice"
                         },
@@ -108,7 +105,6 @@ namespace Summer_Bookstore_Infrastructure.Migrations
                         {
                             Id = 3,
                             AuthorId = 3,
-                            Name = "",
                             PublishedDate = new DateTime(1951, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Foundation"
                         });

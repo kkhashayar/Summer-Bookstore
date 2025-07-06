@@ -48,9 +48,15 @@ public class AuthorRepository : IAuthorRepository
         }
         return result; 
     }
-    public Task AddAsync(Author author)
+    public async Task AddAsync(Author author)
     {
-        throw new NotImplementedException();
+        var result = await _bookstoreContext.Authors.AddAsync(author);
+        if (result == null)
+        {
+            _logger.LogWarning($"Author with name '{author.Name}' already exists. Skipping insertion.");
+            return; // Author already exists, return without adding
+        }
+        await _bookstoreContext.SaveChangesAsync();
     }
 
     public int Delete(int id)

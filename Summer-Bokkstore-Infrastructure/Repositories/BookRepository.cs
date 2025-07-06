@@ -1,4 +1,5 @@
 ﻿
+using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Summer_Bokkstore_Infrastructure.Interfaces;
@@ -12,8 +13,10 @@ public class BookRepository : IBookRepository
 
     private readonly BookstoreDbContext _bookContext;
     private readonly ILogger<BookRepository> _logger;
-    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger)
+   
+    public BookRepository(BookstoreDbContext bookContext,ILogger<BookRepository> logger)
     {
+       
         _bookContext = bookContext; 
         _logger = logger;   
     }
@@ -56,10 +59,42 @@ public class BookRepository : IBookRepository
 
     // Add method should check 1) If the book already exists before adding it. 
     // Add method should add new Author in case the author does not exist.  
-    public Task AddAsync(Book book)
+    // Initially I went with Unit of work but I think it would be overkill for this simple repository pattern.
+    public async Task<int> AddAsync(Book book)
     {
-        throw new NotImplementedException();
+        // I will move this validation to the controller later.
+        if (book is null) throw new ArgumentNullException(nameof(book), "Book object cannot be null.");
+
+        // Same for author name validation
+        var authorName = book.Author?.Name?.Trim();
+        if (string.IsNullOrWhiteSpace(authorName))
+            throw new InvalidOperationException("AuthorName is required.");
+
+        // check if exact book with same author name is already exists.
+        var existingBook = await _bookContext.Books .FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
+
+        if (existingBook != null)
+        {
+            _logger.LogWarning($"Book with title '{book.Title}' and author '{authorName}' already exists at: {DateTime.Now}.");
+            return 0; // Return 0 or some indication that no new book was added
+        }
+
+        /********************************************************************/ 
+        // Author check, find or create
+        var author = await _bookContext.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
+        if (author is null)
+        {
+            author = book.Author;
+            await _bookContext.Authors.AddAsync(author); // Add author if not exists
+            await _bookContext.SaveChangesAsync(); // Save changes to ensure author is added    
+        }
+        book.AuthorId = author.Id; // Set the AuthorId for the book
+
+        await _bookContext.Books.AddAsync(book); // Add the book to the context
+        return await _bookContext.SaveChangesAsync(); // Save changes to the database   
     }
+
+
     public Task<int> Update(Book book)
     {
         throw new NotImplementedException();
@@ -71,9 +106,9 @@ public class BookRepository : IBookRepository
 
     
 
-    public Task<int> SaveChangesAsync()
+    public async Task<int> SaveChangesAsync()
     {
-        throw new NotImplementedException();
+       return  await _bookContext.SaveChangesAsync(); 
     }
 
     

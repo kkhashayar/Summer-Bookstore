@@ -30,6 +30,11 @@ public class BookstoreDbContext : DbContext
             .HasForeignKey(b => b.AuthorId)
             .OnDelete(DeleteBehavior.Cascade);// Deletes books when an author is deleted    
 
+        // Indicator that datetime should be delt with as Date 
+        modelBuilder.Entity<Book>()
+            .Property(b => b.PublishedDate)
+            .HasColumnType("date"); // This will store only the date part without time  
+
 
         // Seeding 
         modelBuilder.Entity<Author>().HasData(
