@@ -9,8 +9,10 @@ public class Authors : ControllerBase
 {
     readonly IUnitOfWork _unitOfWork;
     readonly ILogger<Authors> _logger;
-    public Authors(IUnitOfWork unitOfWork, ILogger<Authors> logger)
+    readonly IAuthorRepository _authorRepository;
+    public Authors(IUnitOfWork unitOfWork, IAuthorRepository authorRepository, ILogger<Authors> logger)
     {
+        _authorRepository = authorRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
@@ -19,7 +21,7 @@ public class Authors : ControllerBase
     [HttpGet("id")]
     public async Task<IActionResult> GetAuthorById(int id)
     {
-        var author = await _unitOfWork.AuthorRepository.GetByIdAsync(id);
+        var author = await _authorRepository.GetByIdAsync(id);
         if (author == null)
         {
             _logger.LogWarning($"Author with ID {id} not found at: {DateTime.Now}.");
@@ -31,7 +33,7 @@ public class Authors : ControllerBase
     [HttpGet("name")]
     public async Task<IActionResult> GetAuthorByName(string name)
     {
-        var author = await _unitOfWork.AuthorRepository.GetByNameAsync(name);
+        var author = await _authorRepository.GetByNameAsync(name);
         if (author == null)
         {
             _logger.LogWarning($"Author with name '{name}' not found at: {DateTime.Now}.");
@@ -43,7 +45,7 @@ public class Authors : ControllerBase
     [HttpGet("All")]
     public async Task<IActionResult> GetAllAuthors()
     {
-        var authors = await _unitOfWork.AuthorRepository.GetAllAuthorsAsync();
+        var authors = await _authorRepository.GetAllAuthorsAsync();
         if (authors.Count == 0)
         {
             _logger.LogInformation($"The author list is empty at: {DateTime.Now}.");
@@ -51,4 +53,6 @@ public class Authors : ControllerBase
         }
         return Ok(authors);
     }
+
+
 }

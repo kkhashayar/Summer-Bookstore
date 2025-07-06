@@ -44,11 +44,16 @@ public class UnitOfWork : IUnitOfWork
         var existingAuthor = await AuthorRepository.GetByNameAsync(author.Name);
         if (existingAuthor == null)
         {
+            Author newAuthor = new Author
+            {
+                Name = author.Name,
+            };
             await AuthorRepository.AddAsync(author);
-            book.Author = author;   
+             
         }
         else
         {
+            book.Author = author;
             book.AuthorId = existingAuthor.Id; // Associate the existing author with the book   
         }
 

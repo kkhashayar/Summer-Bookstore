@@ -13,10 +13,10 @@ public class BookRepository : IBookRepository
 
     private readonly BookstoreDbContext _bookContext;
     private readonly ILogger<BookRepository> _logger;
-    readonly IUnitOfWork _unitOfWork;
-    public BookRepository(BookstoreDbContext bookContext,IUnitOfWork unitOfWork ,ILogger<BookRepository> logger)
+   
+    public BookRepository(BookstoreDbContext bookContext,ILogger<BookRepository> logger)
     {
-        _unitOfWork = unitOfWork;
+       
         _bookContext = bookContext; 
         _logger = logger;   
     }

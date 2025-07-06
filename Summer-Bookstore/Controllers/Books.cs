@@ -14,9 +14,11 @@ public class Books : ControllerBase
     readonly ILogger<Books> _logger;
     readonly IMapper _mapper;
     readonly IBookRepository _bookRepository;
-    public Books(IBookRepository bookRepository, ILogger<Books> logger, IMapper mapper)
+    readonly IUnitOfWork _unitOfWork;
+    public Books(IUnitOfWork unitOfWork,IBookRepository bookRepository,ILogger<Books> logger, IMapper mapper)
     {
         _bookRepository = bookRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
        
@@ -26,6 +28,7 @@ public class Books : ControllerBase
     [HttpGet("id")]
     public async Task<IActionResult> GetBookById(int id)
     {
+        // Connected directly to book repository 
         var book = await _bookRepository.GetByIdAsync(id);
         if (book == null)
         {
@@ -38,6 +41,7 @@ public class Books : ControllerBase
     [HttpGet("title")]
     public async Task<IActionResult> GetBookByTitle(string title)
     {
+        // Connected directly to book repository 
         var book = await _bookRepository.GetByTitleAsync(title);
         if (book == null)
         {
@@ -50,6 +54,7 @@ public class Books : ControllerBase
     [HttpGet("All")]
     public async Task<IActionResult> GetAllBooks()
     {
+        // Connected directly to book repository 
         var books = await _bookRepository.GetAllBooksAsync();
         if (books.Count == 0)
         {
@@ -62,14 +67,16 @@ public class Books : ControllerBase
     [HttpPost("Add")]
     public async Task<IActionResult> AddNewBook([FromBody] BookCreateDto bookcreateDto)
     {
-        var book = _mapper.Map<Book>(bookcreateDto);    
+        var book = _mapper.Map<Book>(bookcreateDto);
         if (book == null)
         {
             // I will change this with proper object validation later 
             _logger.LogWarning("Received null book object at: {DateTime.Now}.");
             return BadRequest("Book object cannot be null.");
+
         }
-        var response = await _bookRepository.AddAsync(book);    
+
+        var response = await _unitOfWork.TryAddBookWithAuthorAsync(book, book.Author);
         return Ok(); 
     }
 }
