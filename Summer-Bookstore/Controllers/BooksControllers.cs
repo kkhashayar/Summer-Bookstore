@@ -40,4 +40,16 @@ public class BooksControllers : ControllerBase
         }
         return Ok(book);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllBooks()
+    {
+        var books = await _unitOfWork.BookRepository.GetAllBooksAsync();
+        if (books.Count == 0)
+        {
+            _logger.LogInformation($"The book list is empty at: {DateTime.Now}.");
+            return NotFound("No books found.");
+        }
+        return Ok(books);
+    }
 }
