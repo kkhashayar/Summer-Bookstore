@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Repositories;
 
@@ -10,8 +11,10 @@ public class Books : ControllerBase
 {
     readonly IUnitOfWork _unitOfWork;
     readonly ILogger<Books> _logger;
-    public Books(IUnitOfWork unitOfWork, ILogger<Books> logger)
+    readonly IMapper _mapper;
+    public Books(IUnitOfWork unitOfWork, ILogger<Books> logger, IMapper mapper)
     {
+        _mapper = mapper;
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
