@@ -9,10 +9,10 @@ namespace Summer_Bookstore.Controllers;
 public class BooksControllers : ControllerBase
 {
     readonly IUnitOfWork _unitOfWork;
-    readonly ILogger<BooksControllers> _logger;
+    readonly ILogger<BooksControllers> logger;
     public BooksControllers(IUnitOfWork unitOfWork, ILogger<BooksControllers> logger)
     {
-        _logger = logger;
+        logger = logger;
         _unitOfWork = unitOfWork;
     }
 
@@ -41,7 +41,7 @@ public class BooksControllers : ControllerBase
         return Ok(book);
     }
 
-    [HttpGet]
+    [HttpGet("All")]
     public async Task<IActionResult> GetAllBooks()
     {
         var books = await _unitOfWork.BookRepository.GetAllBooksAsync();
