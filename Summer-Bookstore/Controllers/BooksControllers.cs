@@ -9,10 +9,10 @@ namespace Summer_Bookstore.Controllers;
 public class BooksControllers : ControllerBase
 {
     readonly IUnitOfWork _unitOfWork;
-    readonly ILogger<BooksControllers> logger;
+    readonly ILogger<BooksControllers> _logger;
     public BooksControllers(IUnitOfWork unitOfWork, ILogger<BooksControllers> logger)
     {
-        logger = logger;
+        _logger = logger;
         _unitOfWork = unitOfWork;
     }
 
