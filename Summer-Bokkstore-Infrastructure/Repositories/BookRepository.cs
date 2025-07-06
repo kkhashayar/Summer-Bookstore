@@ -56,10 +56,20 @@ public class BookRepository : IBookRepository
 
     // Add method should check 1) If the book already exists before adding it. 
     // Add method should add new Author in case the author does not exist.  
-    public Task AddAsync(Book book)
+    public async Task<int> AddAsync(Book book)
     {
-        throw new NotImplementedException();
+        var exisitngBook = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
+        if (exisitngBook is not null)
+        {
+            _logger.LogWarning($"Book {book.Title} is already in the system");
+            return 0; // Return 0 or some indication that the book already exists
+        }
+        await _bookContext.Books.AddAsync(book);        
+        // This will return the number of affected rows, which should be 1 if the book was added successfully 1,2
+        return await SaveChangesAsync(); 
     }
+
+
     public Task<int> Update(Book book)
     {
         throw new NotImplementedException();
@@ -71,9 +81,9 @@ public class BookRepository : IBookRepository
 
     
 
-    public Task<int> SaveChangesAsync()
+    public async Task<int> SaveChangesAsync()
     {
-        throw new NotImplementedException();
+       return  await _bookContext.SaveChangesAsync(); 
     }
 
     

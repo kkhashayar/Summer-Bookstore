@@ -68,7 +68,7 @@ public class Books : ControllerBase
             return BadRequest("Book object cannot be null.");
         }
 
-        await _unitOfWork.BookRepository.AddAsync(book);
+        await _unitOfWork.TryAddBookWithAuthorAsync(book);
         await _unitOfWork.CompleteAsync();
         _logger.LogInformation($"Book '{book.Title}' added successfully at: {DateTime.Now}.");
 
