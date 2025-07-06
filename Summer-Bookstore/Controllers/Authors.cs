@@ -3,14 +3,13 @@ using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Summer_Bookstore.Controllers;
 
-
 [ApiController] 
 [Route("api/[controller]")]
-public class AuthorsController : ControllerBase
+public class Authors : ControllerBase
 {
     readonly IUnitOfWork _unitOfWork;
-    readonly ILogger<AuthorsController> _logger;
-    public AuthorsController(IUnitOfWork unitOfWork, ILogger<AuthorsController> logger)
+    readonly ILogger<Authors> _logger;
+    public Authors(IUnitOfWork unitOfWork, ILogger<Authors> logger)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;

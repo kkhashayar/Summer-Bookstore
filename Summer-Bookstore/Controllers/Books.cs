@@ -1,16 +1,15 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Summer_Bookstore.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BooksControllers : ControllerBase
+public class Books : ControllerBase
 {
     readonly IUnitOfWork _unitOfWork;
-    readonly ILogger<BooksControllers> _logger;
-    public BooksControllers(IUnitOfWork unitOfWork, ILogger<BooksControllers> logger)
+    readonly ILogger<Books> _logger;
+    public Books(IUnitOfWork unitOfWork, ILogger<Books> logger)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
