@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore.DTOs;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Repositories;
@@ -10,21 +11,22 @@ namespace Summer_Bookstore.Controllers;
 [Route("api/[controller]")]
 public class Books : ControllerBase
 {
-    readonly IUnitOfWork _unitOfWork;
     readonly ILogger<Books> _logger;
     readonly IMapper _mapper;
-    public Books(IUnitOfWork unitOfWork, ILogger<Books> logger, IMapper mapper)
+    readonly IBookRepository _bookRepository;
+    public Books(IBookRepository bookRepository, ILogger<Books> logger, IMapper mapper)
     {
+        _bookRepository = bookRepository;
         _mapper = mapper;
         _logger = logger;
-        _unitOfWork = unitOfWork;
+       
     }
 
 
     [HttpGet("id")]
     public async Task<IActionResult> GetBookById(int id)
     {
-        var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
+        var book = await _bookRepository.GetByIdAsync(id);
         if (book == null)
         {
             _logger.LogWarning($"Book with ID {id} not found at: {DateTime.Now}.");
@@ -36,7 +38,7 @@ public class Books : ControllerBase
     [HttpGet("title")]
     public async Task<IActionResult> GetBookByTitle(string title)
     {
-        var book = await _unitOfWork.BookRepository.GetByTitleAsync(title);
+        var book = await _bookRepository.GetByTitleAsync(title);
         if (book == null)
         {
             _logger.LogWarning($"Book with title '{title}' not found at: {DateTime.Now}.");
@@ -48,7 +50,7 @@ public class Books : ControllerBase
     [HttpGet("All")]
     public async Task<IActionResult> GetAllBooks()
     {
-        var books = await _unitOfWork.BookRepository.GetAllBooksAsync();
+        var books = await _bookRepository.GetAllBooksAsync();
         if (books.Count == 0)
         {
             _logger.LogInformation($"The book list is empty at: {DateTime.Now}.");
@@ -68,10 +70,6 @@ public class Books : ControllerBase
             return BadRequest("Book object cannot be null.");
         }
 
-        await _unitOfWork.TryAddBookWithAuthorAsync(book);
-        await _unitOfWork.CompleteAsync();
-        _logger.LogInformation($"Book '{book.Title}' added successfully at: {DateTime.Now}.");
-
-        return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
+        return Ok(); 
     }
 }

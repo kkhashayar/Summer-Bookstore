@@ -1,9 +1,6 @@
 ﻿
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore_Domain.Entities;
-
-
-
 namespace Summer_Bookstore_Infrastructure.Repositories;
 
 public interface IUnitOfWork
