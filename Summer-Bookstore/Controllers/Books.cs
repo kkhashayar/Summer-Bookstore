@@ -69,7 +69,7 @@ public class Books : ControllerBase
             _logger.LogWarning("Received null book object at: {DateTime.Now}.");
             return BadRequest("Book object cannot be null.");
         }
-
+        var response = await _bookRepository.AddAsync(book);    
         return Ok(); 
     }
 }

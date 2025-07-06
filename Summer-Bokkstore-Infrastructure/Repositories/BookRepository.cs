@@ -1,4 +1,5 @@
 ﻿
+using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Summer_Bokkstore_Infrastructure.Interfaces;
@@ -12,8 +13,10 @@ public class BookRepository : IBookRepository
 
     private readonly BookstoreDbContext _bookContext;
     private readonly ILogger<BookRepository> _logger;
-    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger)
+    readonly IUnitOfWork _unitOfWork;
+    public BookRepository(BookstoreDbContext bookContext,IUnitOfWork unitOfWork ,ILogger<BookRepository> logger)
     {
+        _unitOfWork = unitOfWork;
         _bookContext = bookContext; 
         _logger = logger;   
     }
@@ -64,6 +67,8 @@ public class BookRepository : IBookRepository
             _logger.LogWarning($"Book {book.Title} is already in the system");
             return 0; // Return 0 or some indication that the book already exists
         }
+        
+
         await _bookContext.Books.AddAsync(book);        
         // This will return the number of affected rows, which should be 1 if the book was added successfully 1,2
         return await SaveChangesAsync(); 
