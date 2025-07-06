@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Summer_Bookstore.DTOs;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Repositories;
 
@@ -57,8 +58,9 @@ public class Books : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<IActionResult> AddNewBook([FromBody] Book book)
+    public async Task<IActionResult> AddNewBook([FromBody] BookCreateDto bookcreateDto)
     {
+        var book = _mapper.Map<Book>(bookcreateDto);    
         if (book == null)
         {
             // I will change this with proper object validation later 
