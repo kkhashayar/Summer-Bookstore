@@ -3,5 +3,5 @@
 public class AuthorReadDto
 {
     public string Name { get; set; } = string.Empty;    
-    public List<BookReadDto>? ListOfBooks { get; set; }
+    public List<BookReadDto>? Books { get; set; }
 }

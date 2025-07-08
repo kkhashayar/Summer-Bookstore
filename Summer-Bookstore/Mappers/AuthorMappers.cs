@@ -11,7 +11,8 @@ public class AuthorMappers: Profile
         CreateMap<AuthorCreateDto, Author>().ReverseMap();
 
         CreateMap<Author, AuthorReadDto>()
-            .ForMember(dest => dest.ListOfBooks, opt => opt.MapFrom(src => src.Books.Select(b => b.Title).ToList())); 
+            .ForMember(dest => dest.Books, opt => opt.MapFrom(src => src.Books));
+
     }
-    
+
 }

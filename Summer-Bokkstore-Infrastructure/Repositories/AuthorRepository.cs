@@ -30,24 +30,32 @@ public class AuthorRepository : IAuthorRepository
 
     public async Task<Author> GetByNameAsync(string name)
     {
-        var result = await _bookstoreContext.Authors.FirstOrDefaultAsync(a => a.Name == name);
-        if (result == null)
+        var author = await _bookstoreContext.Authors.Where(author => author.Name == name)
+            .Include(author => author.Books).FirstOrDefaultAsync();
+
+        if (author == null)
         {
             _logger.LogWarning($"Author with name '{name}' not found at: {DateTime.Now}.");
-            return result;
         }
-        return result;
+
+        return author;
     }
+
     public async Task<List<Author>> GetAllAuthorsAsync()
     {
-        var result = await _bookstoreContext.Authors.ToListAsync();   
-        if(result.Count == 0)
+        var result = await _bookstoreContext.Authors
+            .Include(author => author.Books)
+            .ToListAsync();
+
+        if (result.Count == 0)
         {
-            _logger.LogInformation($"The author list is empty at: {DateTime.Now}"); 
-            return new List<Author>(); // Return an empty list if no authors are found  
+            _logger.LogInformation($"The author list is empty at: {DateTime.Now}");
+            return new List<Author>();
         }
-        return result; 
+
+        return result;
     }
+
     public async Task AddAsync(Author author)
     {
         var result = await _bookstoreContext.Authors.AddAsync(author);

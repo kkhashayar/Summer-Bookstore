@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Summer_Bookstore.DTOs;
 using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Summer_Bookstore.Controllers;
@@ -10,8 +12,10 @@ public class AuthorsController : ControllerBase
    
     readonly ILogger<AuthorsController> _logger;
     readonly IAuthorRepository _authorRepository;
-    public AuthorsController(IAuthorRepository authorRepository, ILogger<AuthorsController> logger)
+    readonly IMapper _mapper;
+    public AuthorsController(IAuthorRepository authorRepository, IMapper mapper, ILogger<AuthorsController> logger)
     {
+        _mapper = mapper;
         _authorRepository = authorRepository;
         _logger = logger;
         
@@ -39,7 +43,8 @@ public class AuthorsController : ControllerBase
             _logger.LogWarning($"Author with name '{name}' not found at: {DateTime.Now}.");
             return NotFound($"Author with name '{name}' not found.");
         }
-        return Ok(author);
+        var authorToReturn = _mapper.Map<AuthorReadDto>(author);
+        return Ok(authorToReturn);
     }
 
     [HttpGet("All")]
@@ -51,6 +56,7 @@ public class AuthorsController : ControllerBase
             _logger.LogInformation($"The author list is empty at: {DateTime.Now}.");
             return NotFound("No authors found.");
         }
-        return Ok(authors);
+        var authorsToReturn = _mapper.Map<List<AuthorReadDto>>(authors); // Assuming you have a mapping for Author     
+        return Ok(authorsToReturn);
     }
 }
