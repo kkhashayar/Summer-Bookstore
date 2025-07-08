@@ -17,7 +17,7 @@ public class AuthorsController : ControllerBase
         
     }
 
-
+    // Might reserve this endpoint only for admin users later
     [HttpGet("id")]
     public async Task<IActionResult> GetAuthorById(int id)
     {
