@@ -13,12 +13,12 @@ public class BookRepository : IBookRepository
 
     private readonly BookstoreDbContext _bookContext;
     private readonly ILogger<BookRepository> _logger;
-   
-    public BookRepository(BookstoreDbContext bookContext,ILogger<BookRepository> logger)
+
+    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger)
     {
-       
-        _bookContext = bookContext; 
-        _logger = logger;   
+
+        _bookContext = bookContext;
+        _logger = logger;
     }
     // One thing to consider is whether or not we should include author information.
     // We could add a flag like `bool includeAuthor` and use it to conditionally include the author.
@@ -26,23 +26,23 @@ public class BookRepository : IBookRepository
 
     public async Task<Book> GetByIdAsync(int id)
     {
-        var result = await _bookContext.Books.FindAsync(id);    
+        var result = await _bookContext.Books.FindAsync(id);
         if (result == null)
         {
             _logger.LogWarning($"Book with ID {id} not found at: {DateTime.Now}.");
             return result; // This will return null if not found, which is fine for this case.
         }
-        return result; 
+        return result;
     }
 
     public async Task<Book> GetByTitleAsync(string title)
     {
         var result = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == title);
-        if(result == null)
+        if (result == null)
         {
             _logger.LogWarning($"Book with title '{title}' not found at: {DateTime.Now}.");
             return result; // This will return null if not found, which is fine for this case.
-        }   
+        }
         return result;
     }
 
@@ -54,7 +54,7 @@ public class BookRepository : IBookRepository
             _logger.LogInformation($"The book list empty at: {DateTime.Now}");
             return new List<Book>(); // Return an empty list if no books are found  
         }
-        return result;  
+        return result;
     }
 
     // Add method should check 1) If the book already exists before adding it. 
@@ -71,7 +71,7 @@ public class BookRepository : IBookRepository
             throw new InvalidOperationException("AuthorName is required.");
 
         // check if exact book with same author name is already exists.
-        var existingBook = await _bookContext.Books .FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
+        var existingBook = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
 
         if (existingBook != null)
         {
@@ -79,7 +79,7 @@ public class BookRepository : IBookRepository
             return 0; // Return 0 or some indication that no new book was added
         }
 
-        /********************************************************************/ 
+        /********************************************************************/
         // Author check, find or create
         var author = await _bookContext.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
         if (author is null)
@@ -103,30 +103,62 @@ public class BookRepository : IBookRepository
             _logger.LogInformation($"book with id: {book.Id} not found at: {DateTime.Now}");
             return 0; // Return 0 if book not found
         }
+        string authorName = "";
 
-        // Update the book properties
+        if (!string.IsNullOrEmpty(book.Author.Name))
+        {
+            authorName = book.Author.Name.Trim();
+        }
+        else
+        {
+            authorName = book.Author.Name;
+        }
+
+        var existingAuthor = await _bookContext.Authors.FirstOrDefaultAsync(a => a.Name.ToLower() == authorName.ToLower());
+
+        // If we can't find the author we have to create a new one 
+        if (existingAuthor is null)
+        {
+            var newAuthor = new Author { Name = authorName };
+            await _bookContext.Authors.AddAsync(newAuthor); // Add new author if not exists
+            await _bookContext.SaveChangesAsync(); // Save changes to ensure author is added
+            bookToUpdate.AuthorId = newAuthor.Id; // Set the AuthorId for the book
+        }
+        else
+        {
+            bookToUpdate.AuthorId = existingAuthor.Id; // Set the AuthorId for the book
+        }
+
+        UpdateBookproperties(book, bookToUpdate);
+
+        _bookContext.Books.Update(bookToUpdate); // Mark the book as modified
+        return await _bookContext.SaveChangesAsync();
+    }
+
+    private static void UpdateBookproperties(Book book, Book bookToUpdate)
+    {
         bookToUpdate.Title = book.Title;
         bookToUpdate.Description = book.Description;
         bookToUpdate.PublishedDate = book.PublishedDate;
-        _bookContext.Books.Update(bookToUpdate); // Mark the book as modified
-        return await _bookContext.SaveChangesAsync();
-
+        bookToUpdate.Author = book.Author; // Update the navigation property if needed
     }
+
+
     public async Task<int> Delete(int id)
     {
-        var bookToDelete = _bookContext.Books.FirstOrDefaultAsync(b => b.Id == id);
-        if(bookToDelete is null)
+        var bookToDelete = await _bookContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+        if (bookToDelete is null)
         {
             _logger.LogInformation($"book with id: {id} not found at: {DateTime.Now}");
-            return 0; 
+            return 0;
         }
         _bookContext.Remove(bookToDelete);
-        return await SaveChangesAsync();    
+        return await SaveChangesAsync();
     }
     public async Task<int> SaveChangesAsync()
     {
-       return  await _bookContext.SaveChangesAsync(); 
+        return await _bookContext.SaveChangesAsync();
     }
 
-    
+
 }

@@ -6,5 +6,5 @@ public class BookUpdateDto
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
     public DateOnly PublishedDate { get; set; }
-    public string? AuthorName { get; set; }
+    public string AuthorName { get; set; } = string.Empty;
 }

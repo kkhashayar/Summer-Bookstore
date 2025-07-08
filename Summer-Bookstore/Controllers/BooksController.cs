@@ -80,13 +80,9 @@ public class BooksController : ControllerBase
     }
 
     [HttpPut("Update")]
-    public async Task<IActionResult> UpdateBook([FromBody] Book book)
+    public async Task<IActionResult> UpdateBook([FromBody] BookUpdateDto bookupdateDto)
     {
-        if (book == null)
-        {
-            _logger.LogWarning("Received null book object at: {DateTime.Now}.");
-            return BadRequest("Book object cannot be null.");
-        }
+        var book = _mapper.Map<Book>(bookupdateDto);        
         var response = await _bookRepository.Update(book);
         if (response == 0)
         {
