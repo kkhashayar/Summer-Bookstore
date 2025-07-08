@@ -18,9 +18,12 @@ builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 // Register automapper.
+
 // Fix for CS1503: Argument 2: cannot convert from 'System.Reflection.Assembly' Code pilot help :D
 // to 'System.Action<AutoMapper.IMapperConfigurationExpression>'
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(BookMappers).Assembly); });
+builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(AuthorMappers).Assembly); });
+
 // Controllers asnd swagger 
 
 builder.Services.AddControllers();
