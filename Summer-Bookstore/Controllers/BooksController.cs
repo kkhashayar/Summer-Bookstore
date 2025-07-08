@@ -24,6 +24,8 @@ public class BooksController : ControllerBase
     }
 
 
+
+    // Might reserve this endpoint only for admin users later
     [HttpGet("id")]
     public async Task<IActionResult> GetBookById(int id)
     {
@@ -47,7 +49,8 @@ public class BooksController : ControllerBase
             _logger.LogWarning($"Book with title '{title}' not found at: {DateTime.Now}.");
             return NotFound($"Book with title '{title}' not found.");
         }
-        return Ok(book);
+        var bootToReturn = _mapper.Map<BookReadDto>(book);      
+        return Ok(bootToReturn);
     }
 
     [HttpGet("All")]
@@ -60,7 +63,10 @@ public class BooksController : ControllerBase
             _logger.LogInformation($"The book list is empty at: {DateTime.Now}.");
             return NotFound("No books found.");
         }
-        return Ok(books);
+        // readonly books 
+        var booksToReturn = _mapper.Map<List<BookReadDto>>(books);
+        return Ok(booksToReturn);
+        
     }
 
     [HttpPost("Add")]
