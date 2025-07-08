@@ -97,7 +97,19 @@ public class BookRepository : IBookRepository
 
     public Task<int> Update(Book book)
     {
-        throw new NotImplementedException();
+        var bookToUpdate = _bookContext.Books.FirstOrDefault(b => b.Id == book.Id);
+        if (bookToUpdate is null)
+        {
+            return Task.FromResult(0); // Return 0 if book not found
+        }
+
+        // Update the book properties
+        bookToUpdate.Title = book.Title;
+        bookToUpdate.Description = book.Description;
+        bookToUpdate.PublishedDate = book.PublishedDate;
+        _bookContext.Books.Update(bookToUpdate); // Mark the book as modified
+        return _bookContext.SaveChangesAsync();
+
     }
     public Task<int> Delete(int id)
     {

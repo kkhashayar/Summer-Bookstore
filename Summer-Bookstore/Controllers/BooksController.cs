@@ -78,4 +78,22 @@ public class BooksController : ControllerBase
         var response = await _bookRepository.AddAsync(book);
         return Ok(); 
     }
+
+    [HttpPut("Update")]
+    public async Task<IActionResult> UpdateBook([FromBody] Book book)
+    {
+        if (book == null)
+        {
+            _logger.LogWarning("Received null book object at: {DateTime.Now}.");
+            return BadRequest("Book object cannot be null.");
+        }
+        var response = await _bookRepository.Update(book);
+        if (response == 0)
+        {
+            _logger.LogWarning($"Failed to update book with ID {book.Id} at: {DateTime.Now}.");
+            return NotFound($"Book with ID {book.Id} not found.");
+        }
+        
+        return Ok("Book updated successfully."); // 
+    }
 }

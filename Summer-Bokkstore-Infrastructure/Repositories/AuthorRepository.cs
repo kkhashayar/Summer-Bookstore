@@ -58,19 +58,19 @@ public class AuthorRepository : IAuthorRepository
         }
         await _bookstoreContext.SaveChangesAsync();
     }
-
-    public int Delete(int id)
+    public async Task<int> Update(Author author)
     {
         throw new NotImplementedException();
     }
-
+    public async Task<int> Delete(int id)
+    {
+        throw new NotImplementedException();
+    }
+    
     public Task SaveChangesAsync()
     {
         throw new NotImplementedException();
     }
 
-    public int Update(Author author)
-    {
-        throw new NotImplementedException();
-    }
+    
 }
