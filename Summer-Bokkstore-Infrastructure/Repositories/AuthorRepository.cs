@@ -58,11 +58,20 @@ public class AuthorRepository : IAuthorRepository
         }
         await _bookstoreContext.SaveChangesAsync();
     }
-    public async Task<int> Update(Author author)
+
+    // todo: Implement the Update method to update an existing author.
+    public int Update(Author author)
     {
-        throw new NotImplementedException();
+        var authorToUpdate = _bookstoreContext.Authors.FirstOrDefault(a => a.Id == author.Id
+        && a.Name == author.Name); 
+        if(authorToUpdate is null)
+        {
+            _logger.LogInformation($"Author with {author.Name} and {author.Id} not found at: {DateTime.Now}");       
+            return 0;
+        }
+        return authorToUpdate.Id;   
     }
-    public async Task<int> Delete(int id)
+    public int Delete(int id)
     {
         throw new NotImplementedException();
     }

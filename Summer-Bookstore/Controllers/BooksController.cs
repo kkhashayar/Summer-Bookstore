@@ -96,4 +96,18 @@ public class BooksController : ControllerBase
         
         return Ok("Book updated successfully."); // 
     }
+
+    [HttpDelete("id")]
+    public async Task<IActionResult> DeleteBook(int id)
+    {
+        var response = await _bookRepository.Delete(id);
+        if (response == 0)
+        {
+            _logger.LogWarning($"Failed to delete book with ID {id} at: {DateTime.Now}.");
+            return NotFound($"Book with ID {id} not found.");
+        }
+        
+        return Ok("Book deleted successfully."); // 
+    }
+
 }

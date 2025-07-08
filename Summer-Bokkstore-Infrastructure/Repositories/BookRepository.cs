@@ -95,12 +95,13 @@ public class BookRepository : IBookRepository
     }
 
 
-    public Task<int> Update(Book book)
+    public async Task<int> Update(Book book)
     {
-        var bookToUpdate = _bookContext.Books.FirstOrDefault(b => b.Id == book.Id);
+        var bookToUpdate = await _bookContext.Books.FirstOrDefaultAsync(b => b.Id == book.Id);
         if (bookToUpdate is null)
         {
-            return Task.FromResult(0); // Return 0 if book not found
+            _logger.LogInformation($"book with id: {book.Id} not found at: {DateTime.Now}");
+            return 0; // Return 0 if book not found
         }
 
         // Update the book properties
@@ -108,16 +109,20 @@ public class BookRepository : IBookRepository
         bookToUpdate.Description = book.Description;
         bookToUpdate.PublishedDate = book.PublishedDate;
         _bookContext.Books.Update(bookToUpdate); // Mark the book as modified
-        return _bookContext.SaveChangesAsync();
+        return await _bookContext.SaveChangesAsync();
 
     }
-    public Task<int> Delete(int id)
+    public async Task<int> Delete(int id)
     {
-        throw new NotImplementedException();
+        var bookToDelete = _bookContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+        if(bookToDelete is null)
+        {
+            _logger.LogInformation($"book with id: {id} not found at: {DateTime.Now}");
+            return 0; 
+        }
+        _bookContext.Remove(bookToDelete);
+        return await SaveChangesAsync();    
     }
-
-    
-
     public async Task<int> SaveChangesAsync()
     {
        return  await _bookContext.SaveChangesAsync(); 
