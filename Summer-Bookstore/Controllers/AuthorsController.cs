@@ -65,13 +65,13 @@ public class AuthorsController : ControllerBase
     public async Task<IActionResult> AddNewAuthor([FromBody] AuthorCreateDto authorcreateDto)
     {
         var author = _mapper.Map<Author>(authorcreateDto);
-        var response = _authorRepository.Update(author);
+        var response = await _authorRepository.AddAsync(author);
         if(response == 0)
         {
             _logger.LogInformation($"Something went wrong while trying to update author with id:{authorcreateDto.Name} at:{DateTime.Now}");
             return NoContent();  
         }
-        // we can return the Id of new record(Author)
+        // at least one record should have been created.
         return Ok($"Added new author with id:{response}");     
     }
 }

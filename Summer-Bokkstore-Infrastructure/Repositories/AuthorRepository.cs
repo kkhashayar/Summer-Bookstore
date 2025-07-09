@@ -56,15 +56,15 @@ public class AuthorRepository : IAuthorRepository
         return result;
     }
 
-    public async Task AddAsync(Author author)
+    public async Task<int> AddAsync(Author author)
     {
         var result = await _bookstoreContext.Authors.AddAsync(author);
         if (result == null)
         {
             _logger.LogWarning($"Author with name '{author.Name}' already exists. Skipping insertion.");
-            return; // Author already exists, return without adding
+            return 0; // Author already exists, return without adding
         }
-        await _bookstoreContext.SaveChangesAsync();
+        return await _bookstoreContext.SaveChangesAsync();
     }
 
     // todo: Implement the Update method to update an existing author.
