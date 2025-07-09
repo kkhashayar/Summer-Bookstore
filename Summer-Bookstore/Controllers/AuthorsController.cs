@@ -62,7 +62,7 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> Update([FromBody] AuthorCreateDto authorcreateDto)
+    public async Task<IActionResult> AddNewAuthor([FromBody] AuthorCreateDto authorcreateDto)
     {
         var author = _mapper.Map<Author>(authorcreateDto);
         var response = _authorRepository.Update(author);
