@@ -53,7 +53,7 @@ public class BooksController : ControllerBase
         return Ok(bootToReturn);
     }
 
-    [HttpGet("All")]
+    [HttpGet("all")]
     public async Task<IActionResult> GetAllBooks()
     {
         // Connected directly to book repository 
@@ -69,7 +69,7 @@ public class BooksController : ControllerBase
         
     }
 
-    [HttpPost("Add")]
+    [HttpPost("add")]
     public async Task<IActionResult> AddNewBook([FromBody] BookCreateDto bookcreateDto)
     {
         var book = _mapper.Map<Book>(bookcreateDto);
@@ -85,7 +85,7 @@ public class BooksController : ControllerBase
         return Ok(); 
     }
 
-    [HttpPut("Update")]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdateBook([FromBody] BookUpdateDto bookupdateDto)
     {
         var book = _mapper.Map<Book>(bookupdateDto);        

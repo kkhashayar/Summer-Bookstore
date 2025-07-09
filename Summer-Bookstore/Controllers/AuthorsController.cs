@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Summer_Bookstore.DTOs;
+using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Summer_Bookstore.Controllers;
@@ -58,5 +59,11 @@ public class AuthorsController : ControllerBase
         }
         var authorsToReturn = _mapper.Map<List<AuthorReadDto>>(authors); // Assuming you have a mapping for Author     
         return Ok(authorsToReturn);
+    }
+
+    [HttpPost("add")]
+    public async Task<IActionResult> Update([FromBody] AuthorCreate authorToupdate)
+    {
+        return null;
     }
 }
