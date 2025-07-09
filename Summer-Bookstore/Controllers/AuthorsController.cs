@@ -48,7 +48,7 @@ public class AuthorsController : ControllerBase
         return Ok(authorToReturn);
     }
 
-    [HttpGet("All")]
+    [HttpGet("all")]
     public async Task<IActionResult> GetAllAuthors()
     {
         var authors = await _authorRepository.GetAllAuthorsAsync();
@@ -62,8 +62,16 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> Update([FromBody] AuthorCreate authorToupdate)
+    public async Task<IActionResult> Update([FromBody] AuthorCreateDto authorcreateDto)
     {
-        return null;
+        var author = _mapper.Map<Author>(authorcreateDto);
+        var response = _authorRepository.Update(author);
+        if(response == 0)
+        {
+            _logger.LogInformation($"Something went wrong while trying to update author with id:{authorcreateDto.Name} at:{DateTime.Now}");
+            return NoContent();  
+        }
+        // we can return the Id of new record(Author)
+        return Ok($"Added new author with id:{response}");     
     }
 }
