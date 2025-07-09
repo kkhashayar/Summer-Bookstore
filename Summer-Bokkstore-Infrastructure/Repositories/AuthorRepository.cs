@@ -58,10 +58,17 @@ public class AuthorRepository : IAuthorRepository
 
     public async Task<int> AddAsync(Author author)
     {
+        var existingAuthor = await _bookstoreContext.Authors
+            .FirstOrDefaultAsync(a => a.Name == author.Name);
+        if (existingAuthor is not null)
+        {
+            _logger.LogWarning($"Author with name '{author.Name}' already exists. Skipping insertion.");
+            return 0; // Author already exists, return without adding
+        }
         var result = await _bookstoreContext.Authors.AddAsync(author);
         if (result == null)
         {
-            _logger.LogWarning($"Author with name '{author.Name}' already exists. Skipping insertion.");
+            _logger.LogWarning($"Something went wrong while trying to add new author at {DateTime.Now}");
             return 0; // Author already exists, return without adding
         }
         return await _bookstoreContext.SaveChangesAsync();
