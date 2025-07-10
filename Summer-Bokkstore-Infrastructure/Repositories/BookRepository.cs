@@ -30,7 +30,7 @@ public class BookRepository : IBookRepository
         if (result == null)
         {
             _logger.LogWarning($"Book with ID {id} not found at: {DateTime.Now}.");
-            return result; // This will return null if not found, which is fine for this case.
+            return null; ; // This will return null if not found, which is fine for this case.
         }
         return result;
     }

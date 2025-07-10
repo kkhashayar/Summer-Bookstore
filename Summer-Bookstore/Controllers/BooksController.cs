@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore.DTOs;
 using Summer_Bookstore_Domain.Entities;
-using Summer_Bookstore_Infrastructure.Repositories;
-
 namespace Summer_Bookstore.Controllers;
+
+
 
 [ApiController]
 [Route("api/[controller]")]
@@ -23,10 +23,12 @@ public class BooksController : ControllerBase
        
     }
 
-
-
-    // Might reserve this endpoint only for admin users later
-    [HttpGet("id")]
+    /// <summary>
+    /// Retrieves a book by its unique ID.
+    /// </summary>
+    /// <param name="id">The ID of the book.</param>
+    /// <returns>Returns 200 OK with the book if found, otherwise 404 Not Found.</returns>
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetBookById(int id)
     {
         // Connected directly to book repository 
@@ -39,7 +41,13 @@ public class BooksController : ControllerBase
         return Ok(book);
     }
 
-    [HttpGet("title")]
+
+    /// <summary>
+    /// Retrieves a book by its title.
+    /// </summary>
+    /// <param name="title">The title of the book.</param>
+    /// <returns>Returns 200 OK with the book if found, otherwise 404 Not Found.</returns>
+    [HttpGet("title/{title}")]
     public async Task<IActionResult> GetBookByTitle(string title)
     {
         // Connected directly to book repository 
@@ -53,7 +61,11 @@ public class BooksController : ControllerBase
         return Ok(bootToReturn);
     }
 
-    [HttpGet("all")]
+    /// <summary>
+    /// Retrieves all books from the database.
+    /// </summary>
+    /// <returns>Returns 200 OK with a list of books, or 404 if none are found.</returns>
+    [HttpGet()]
     public async Task<IActionResult> GetAllBooks()
     {
         // Connected directly to book repository 
@@ -69,7 +81,12 @@ public class BooksController : ControllerBase
         
     }
 
-    [HttpPost("add")]
+    /// <summary>
+    /// Adds a new book to the system.
+    /// </summary>
+    /// <param name="bookCreateDto">The book details to create.</param>
+    /// <returns>Returns 201 Created with location header if successful, 400 Bad Request if input is invalid.</returns>
+    [HttpPost()]
     public async Task<IActionResult> AddNewBook([FromBody] BookCreateDto bookcreateDto)
     {
         var book = _mapper.Map<Book>(bookcreateDto);
@@ -82,10 +99,15 @@ public class BooksController : ControllerBase
         }
 
         var response = await _bookRepository.AddAsync(book);
-        return Ok(); 
+        return Created(); 
     }
 
-    [HttpPut("update")]
+    /// <summary>
+    /// Updates an existing book.
+    /// </summary>
+    /// <param name="bookUpdateDto">The updated book data.</param>
+    /// <returns>Returns 204 No Content if successful, 400 Bad Request for ID mismatch, or 404 Not Found if book doesn't exist.</returns>
+    [HttpPut()]
     public async Task<IActionResult> UpdateBook([FromBody] BookUpdateDto bookupdateDto)
     {
         var book = _mapper.Map<Book>(bookupdateDto);        
@@ -99,6 +121,11 @@ public class BooksController : ControllerBase
         return Ok("Book updated successfully."); // 
     }
 
+    /// <summary>
+    /// Deletes a book by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the book to delete.</param>
+    /// <returns>Returns 204 No Content if successful, or 404 Not Found if the book doesn't exist.</returns>
     [HttpDelete("id")]
     public async Task<IActionResult> DeleteBook(int id)
     {
