@@ -9,5 +9,8 @@ public class AuthorMappers: Profile
     public AuthorMappers()
     {
         CreateMap<AuthorCreateDto, Author>().ReverseMap();
+        CreateMap<AuthorUpdateDto, Author>().ReverseMap();  
+        CreateMap<Author, AuthorReadDto>().ForMember(dest => dest.Books, opt => opt.MapFrom(src => src.Books));
     }
+
 }

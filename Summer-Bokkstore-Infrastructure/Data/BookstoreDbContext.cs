@@ -23,6 +23,12 @@ public class BookstoreDbContext : DbContext
             .HasKey(b => b.Id);
         modelBuilder.Entity<Author>()
             .HasKey(a => a.Id);
+
+        // set it to unique 
+        modelBuilder.Entity<Author>()
+            .HasIndex(a => a.Name)
+            .IsUnique(); 
+        
         // Example of configuring a relationship
         modelBuilder.Entity<Book>()
             .HasOne(b => b.Author)
