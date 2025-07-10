@@ -74,4 +74,17 @@ public class AuthorsController : ControllerBase
         // at least one record should have been created.
         return Ok($"Added new author with id:{response}");     
     }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] AuthorUpdateDto authorUpdateDto)
+    {
+        var author = _mapper.Map<Author>(authorUpdateDto);
+
+        var response = _authorRepository.Update(author);    
+        if(response == 0)
+        {
+            return BadRequest(response);
+        }
+        return NoContent();
+    }
 }
