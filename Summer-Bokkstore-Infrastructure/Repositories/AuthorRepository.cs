@@ -89,7 +89,22 @@ public class AuthorRepository : IAuthorRepository
     }
     public int Delete(int id)
     {
-        throw new NotImplementedException();
+        var authorToDelete = _bookstoreContext.Authors.FirstOrDefault(author => author.Id == id);   
+        if(authorToDelete is null)
+        {
+            _logger.LogInformation($"Author with Id:{id} not found");
+            return 0;   
+        }
+        var relatedBooksToDelete =  _bookstoreContext.Books.Where(book => book.AuthorId == id).ToList();  
+        if(relatedBooksToDelete.Count != 0)
+        {
+            _bookstoreContext.Books.RemoveRange(relatedBooksToDelete);
+            _bookstoreContext.SaveChanges(true);    
+        }
+
+        _bookstoreContext.Remove(authorToDelete);
+        return _bookstoreContext.SaveChanges(); 
+        
     }
     
     

@@ -87,4 +87,12 @@ public class AuthorsController : ControllerBase
         }
         return NoContent();
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteAuthor(int authorId)
+    {
+        var response = _authorRepository.Delete(authorId);
+        if(response == 0) { return NoContent(); }   
+        return Ok($"Author with Id:{authorId} deleted.");
+    }
 }
