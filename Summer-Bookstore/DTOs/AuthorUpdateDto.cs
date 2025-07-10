@@ -2,5 +2,6 @@
 
 public class AuthorUpdateDto : AuthorCreateDto
 {
-    // Just for naming 
+    public int Id { get; set; }
+
 }

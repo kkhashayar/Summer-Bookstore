@@ -77,24 +77,22 @@ public class AuthorRepository : IAuthorRepository
     // todo: Implement the Update method to update an existing author.
     public int Update(Author author)
     {
-        var authorToUpdate = _bookstoreContext.Authors.FirstOrDefault(a => a.Id == author.Id
-        && a.Name == author.Name); 
+        var authorToUpdate = _bookstoreContext.Authors.FirstOrDefault(a => a.Id == author.Id); 
         if(authorToUpdate is null)
         {
             _logger.LogInformation($"Author with {author.Name} and {author.Id} not found at: {DateTime.Now}");       
             return 0;
         }
-        return authorToUpdate.Id;   
+        authorToUpdate.Name = author.Name;      
+      
+        return _bookstoreContext.SaveChanges();   
     }
     public int Delete(int id)
     {
         throw new NotImplementedException();
     }
     
-    public Task SaveChangesAsync()
-    {
-        throw new NotImplementedException();
-    }
+    
 
     
 }

@@ -12,6 +12,5 @@ public interface IAuthorRepository
     // I leave this two methods without async because they wont directly interact with IO
     int Update(Author author);
     int Delete(int id);
-    Task SaveChangesAsync(); // This method will save changes to the database   
 
 }
