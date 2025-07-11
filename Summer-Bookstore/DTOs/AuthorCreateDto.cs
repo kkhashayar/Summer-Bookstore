@@ -1,4 +1,6 @@
-﻿namespace Summer_Bookstore.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Summer_Bookstore.DTOs;
 
 public class AuthorCreateDto
 {
