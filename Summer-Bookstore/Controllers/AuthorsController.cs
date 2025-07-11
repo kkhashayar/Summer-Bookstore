@@ -86,6 +86,11 @@ public class AuthorsController : ControllerBase
     [HttpPost()]
     public async Task<IActionResult> AddNewAuthor([FromBody] AuthorCreateDto authorcreateDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning($"Invalid model state for author creation at: {DateTime.Now}.");
+            return BadRequest(ModelState);
+        }
         var author = _mapper.Map<Author>(authorcreateDto);
         var response = await _authorRepository.AddAsync(author);
         if (response == 0)
@@ -106,6 +111,11 @@ public class AuthorsController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] AuthorUpdateDto authorUpdateDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning($"Invalid model state for author update at: {DateTime.Now}.");
+            return BadRequest(ModelState);
+        }
         var author = _mapper.Map<Author>(authorUpdateDto);
 
         var response = _authorRepository.Update(author);
@@ -125,6 +135,11 @@ public class AuthorsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAuthor(int id)
     {
+        if (id <= 0)
+        {
+            _logger.LogWarning($"Invalid author ID {id} for deletion at: {DateTime.Now}.");
+            return BadRequest("Invalid author ID.");
+        }
         var response = _authorRepository.Delete(id);
         if(response == 0) 
         { 

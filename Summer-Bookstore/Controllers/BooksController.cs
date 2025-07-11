@@ -89,6 +89,11 @@ public class BooksController : ControllerBase
     [HttpPost()]
     public async Task<IActionResult> AddNewBook([FromBody] BookCreateDto bookcreateDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning($"Invalid book creation request at: {DateTime.Now}.");
+            return BadRequest(ModelState);
+        }
         var book = _mapper.Map<Book>(bookcreateDto);
         if (book == null)
         {
@@ -110,6 +115,11 @@ public class BooksController : ControllerBase
     [HttpPut()]
     public async Task<IActionResult> UpdateBook([FromBody] BookUpdateDto bookupdateDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogWarning($"Invalid book update request at: {DateTime.Now}.");
+            return BadRequest(ModelState);
+        }
         var book = _mapper.Map<Book>(bookupdateDto);        
         var response = await _bookRepository.Update(book);
         if (response == 0)
@@ -129,6 +139,11 @@ public class BooksController : ControllerBase
     [HttpDelete("id")]
     public async Task<IActionResult> DeleteBook(int id)
     {
+        if (id <= 0)
+        {
+            _logger.LogWarning($"Invalid book ID {id} at: {DateTime.Now}.");
+            return BadRequest("Invalid book ID.");
+        }
         var response = await _bookRepository.Delete(id);
         if (response == 0)
         {
