@@ -13,7 +13,7 @@ namespace Summer_Bookstore_Infrastructure.Migrations
 {
     [DbContext(typeof(BookstoreDbContext))]
     [Migration("20250713153723_Added_User_Class_And_Role_Enumes")]
-    partial class Added_User_Class_And_Role_Enumes
+    partial class Added_User_Class_And_Role_Enums
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -5,7 +5,7 @@
 namespace Summer_Bookstore_Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Added_User_Class_And_Role_Enumes : Migration
+    public partial class Added_User_Class_And_Role_Enums : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
