@@ -13,6 +13,7 @@ public class BookstoreDbContext : DbContext
     public DbSet<Book> Books { get; set; } = null!;
     public DbSet<Author> Authors { get; set; } = null!;
 
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +41,8 @@ public class BookstoreDbContext : DbContext
         modelBuilder.Entity<Book>()
             .Property(b => b.PublishedDate)
             .HasColumnType("date"); // This will store only the date part without time  
+
+
 
 
         // Seeding 
