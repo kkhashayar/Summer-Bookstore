@@ -23,6 +23,7 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 // to 'System.Action<AutoMapper.IMapperConfigurationExpression>'
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(BookMappers).Assembly); });
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(AuthorMappers).Assembly); });
+builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegisterMappers).Assembly); });    
 
 // Controllers asnd swagger 
 
