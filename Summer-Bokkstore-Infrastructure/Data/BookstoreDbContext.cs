@@ -58,6 +58,7 @@ public class BookstoreDbContext : DbContext
             new Book { Id = 2, Title = "Pride and Prejudice", PublishedDate = new DateTime(1813, 1, 28), AuthorId = 2 },
             new Book { Id = 3, Title = "Foundation", PublishedDate = new DateTime(1951, 6, 1), AuthorId = 3 }
         );
+
     }
 
 }
