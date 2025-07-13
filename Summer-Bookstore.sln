@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-Domain", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-Infrastructure", "Summer-Bokkstore-Infrastructure\Summer-Bookstore-Infrastructure.csproj", "{E0956E4E-9C41-46D8-8E65-C44585FCB34F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Summer-Bookstore-Tests", "Tests\Summer-Bookstore-Tests.csproj", "{7817986A-F6C9-4FED-9023-FFF5B58EF04B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E0956E4E-9C41-46D8-8E65-C44585FCB34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0956E4E-9C41-46D8-8E65-C44585FCB34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0956E4E-9C41-46D8-8E65-C44585FCB34F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7817986A-F6C9-4FED-9023-FFF5B58EF04B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7817986A-F6C9-4FED-9023-FFF5B58EF04B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7817986A-F6C9-4FED-9023-FFF5B58EF04B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7817986A-F6C9-4FED-9023-FFF5B58EF04B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
