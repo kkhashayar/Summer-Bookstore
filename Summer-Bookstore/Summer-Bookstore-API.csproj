@@ -20,6 +20,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Summer-Bokkstore-Infrastructure\Summer-Bookstore-Infrastructure.csproj" />
 		<ProjectReference Include="..\Summer-Bookstore-Domain\Summer-Bookstore-Domain.csproj" />
+		<ProjectReference Include="..\Summer_Bookstore.Application\Summer_Bookstore.Application.csproj" />
 	</ItemGroup>
 
 </Project>
