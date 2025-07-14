@@ -13,6 +13,7 @@ public class BookstoreDbContext : DbContext
     public DbSet<Book> Books { get; set; } = null!;
     public DbSet<Author> Authors { get; set; } = null!;
 
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,6 +43,8 @@ public class BookstoreDbContext : DbContext
             .HasColumnType("date"); // This will store only the date part without time  
 
 
+
+
         // Seeding 
         modelBuilder.Entity<Author>().HasData(
         new Author { Id = 1, Name = "George Orwell" },
@@ -55,6 +58,7 @@ public class BookstoreDbContext : DbContext
             new Book { Id = 2, Title = "Pride and Prejudice", PublishedDate = new DateTime(1813, 1, 28), AuthorId = 2 },
             new Book { Id = 3, Title = "Foundation", PublishedDate = new DateTime(1951, 6, 1), AuthorId = 3 }
         );
+
     }
 
 }
