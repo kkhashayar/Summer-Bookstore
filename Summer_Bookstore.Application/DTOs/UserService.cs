@@ -27,31 +27,31 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public async Task<User> RegisterUserAsync(UserRegisterDto userRegisterDto)
+    public async Task<User> RegisterUserAsync(User user)
     {
         // 1) Check if the user already exists    
-        var existingUser = _context.Users.FirstOrDefault(u => u.Username == userRegisterDto.Username);  
-        if(existingUser is not null)
+        var existingUser = _context.Users.FirstOrDefault(u => u.Username == user.Username);
+        if (existingUser is not null)
         {
-            _logger.LogWarning("User with username {Username} already exists.", userRegisterDto.Username); 
-            throw new InvalidOperationException($"User with username {userRegisterDto.Username} already exists.");
+            _logger.LogWarning("User with username {Username} already exists.", user.Username);
+            throw new InvalidOperationException($"User with username {user.Username} already exists.");
         }
 
         // 2) hash the password 
-        var hashedPasword = HashPassword(userRegisterDto.Password);
+        var hashedPasword = HashPassword(user.Password);
 
         // 3) Create a new user entity
         // Setting a default role, can be changed later 
-        if (userRegisterDto.Role is Roles.none)
+        if (user.Role is Roles.none)
         {
-            userRegisterDto.Role = Roles.User; 
+            user.Role = Roles.User;
         }
         User newUser = new User
         {
-            Username = userRegisterDto.Username,
+            Username = user.Username,
             PasswordHash = hashedPasword, // Store the hashed password
-            Role = userRegisterDto.Role
-        };  
+            Role = user.Role
+        };
         _context.Users.Add(newUser); // Add the new user to the context 
         await _context.SaveChangesAsync(); // Save changes to the database      
         return newUser;
