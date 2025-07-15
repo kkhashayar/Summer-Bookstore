@@ -43,5 +43,19 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("Login")]
+    public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLoginDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var user = await _userService.LoginAsync(userLoginDto.Username, userLoginDto.Password);
+        if (user == null)
+        {
+            return Unauthorized("Invalid username or password.");
+        }
+        
+        return Ok(user.Id);
+    }
 
 }
