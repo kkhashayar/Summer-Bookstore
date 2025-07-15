@@ -11,11 +11,14 @@ public class UserRegisterMappers
     {
         public UserMappers()
         {
-            CreateMap<UserRegisterDto, User>()
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
-                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
-                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
-                .ReverseMap();
+            //CreateMap<UserRegisterDto, User>()
+            //    .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+            //    .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+            //    .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
+            //    .ReverseMap();
+
+            CreateMap<UserRegisterDto,User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();    // Have to try this`
         }
     }
 }
