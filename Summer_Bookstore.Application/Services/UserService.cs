@@ -1,12 +1,11 @@
 ﻿
 using Microsoft.Extensions.Logging;
-using Summer_Bookstore.Application.Services;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Domain.Enums;
 using Summer_Bookstore_Infrastructure.Data;
 using System.Security.Cryptography;
 
-namespace Summer_Bookstore.Application.DTOs;
+namespace Summer_Bookstore.Application.Services;
 
 public class UserService : IUserService
 {
@@ -17,7 +16,7 @@ public class UserService : IUserService
         _context = context;
          _logger = logger;
     }
-    public Task<User?> GetUserByUsernameAsync(string username)
+    public Task<User?> GetUserByUsernameAndPasswordAsync(string username)
     {
         throw new NotImplementedException();
     }
