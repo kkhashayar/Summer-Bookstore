@@ -28,7 +28,7 @@ public class UserService : IUserService
 
     public async Task<User> RegisterUserAsync(User user)
     {
-        // 1) Check if the user already exists    
+        // 1) Check if the user already exists, we could have same username, but I thought maybe better they are unique
         var existingUser = _context.Users.FirstOrDefault(u => u.Username == user.Username);
         if (existingUser is not null)
         {
