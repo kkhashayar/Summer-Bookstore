@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Domain.Enums;
@@ -16,14 +17,27 @@ public class UserService : IUserService
         _context = context;
          _logger = logger;
     }
-    public Task<User?> GetUserByUsernameAndPasswordAsync(string username)
-    {
-        throw new NotImplementedException();
-    }
+   
 
-    public Task<User> LoginAsync(string username, string password)
+    public async Task<User> LoginAsync(string username, string password)
     {
-        throw new NotImplementedException();
+        var passwordHash = HashPassword(password);  
+        var userByUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if(userByUsername is null)
+        {
+            _logger.LogWarning("User with username {Username} not found.", username);
+            throw new InvalidOperationException($"User with username {username} not found."); // Not sure about this, I guess it is better to back something like service response object
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.PasswordHash.SequenceEqual(passwordHash));    
+        if(user is null)
+        {
+            _logger.LogWarning($"Something went wrong while trying to login with{username} {password} at {DateTime.Now}");
+            throw new InvalidOperationException($"Username or password is wrong");
+        }
+
+        return user;
+
     }
 
     public async Task<User> RegisterUserAsync(User user)
