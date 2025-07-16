@@ -1,13 +1,16 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore.Application.Services;
 using Summer_Bookstore.Application.Settings;
 using Summer_Bookstore.Mappers;
-using Summer_Bookstore_Domain.Entities;
-using Summer_Bookstore_Infrastructure;
 using Summer_Bookstore_Infrastructure.Data;
 using Summer_Bookstore_Infrastructure.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +38,33 @@ builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegisterMap
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwSettings"));
 
 // Registering TokenService 
-builder.Services.AddScoped<ITokenService, TokenService>();      
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+
+// Configure authentication // most complicated part so far.
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
+        };
+    });
+
+// Role based plicies: 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+});
+
 
 // Controllers asnd swagger
 builder.Services.AddControllers();
@@ -52,6 +81,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
