@@ -32,6 +32,8 @@ builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(BookMappers).As
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(AuthorMappers).Assembly); });
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegisterMappers).Assembly); });
 
+// Above code I am not sure if only one mapper assembly would be enough! 
+
 
 // Registering JwSettings 
 // This tells .NET to look inside appsettings.json for a section called "JwtSettings" and bind it to JwSettings class.
