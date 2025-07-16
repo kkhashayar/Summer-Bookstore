@@ -70,6 +70,17 @@ public class UserService : IUserService
         return newUser;
     }
 
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        var result = await _context.Users.ToListAsync();    
+        if(result.Count == 0)
+        {
+            return new List<User>(); // Return an empty list if no users are found  
+        }
+
+        return result;  
+    }
+
     // Using the SHA256 algorithm to hash the password, also each time user tries to login,
     // we will hash the password and compare it with the stored hash in the database.
     private byte[] HashPassword(string password)

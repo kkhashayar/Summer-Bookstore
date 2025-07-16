@@ -8,5 +8,6 @@ public interface IUserService
 {
     Task<User> RegisterUserAsync(User user);
     Task<User> LoginAsync(string username, string password);
-    
+    Task<List<User>> GetAllUsersAsync();    
+
 }
