@@ -14,9 +14,11 @@ public class UsersController : ControllerBase
     readonly IMapper _mapper;
     readonly ILogger<UsersController> _logger;
     readonly IUserService _userService;
+    readonly ITokenService _tokenService;
 
-    public UsersController(ILogger<UsersController> logger, IMapper mapper, IUserService userService)
+    public UsersController(ILogger<UsersController> logger, IMapper mapper, IUserService userService, ITokenService tokenService)
     {
+        _tokenService = tokenService;
         _userService = userService;
         _logger = logger;
         _mapper = mapper;
@@ -54,8 +56,9 @@ public class UsersController : ControllerBase
         {
             return Unauthorized("Invalid username or password.");
         }
-        
-        return Ok(user.Id);
+        var token = _tokenService.CreateToken(user);
+
+        return Ok(new { token});
     }
 
 }
