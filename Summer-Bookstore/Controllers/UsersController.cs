@@ -57,8 +57,9 @@ public class UsersController : ControllerBase
             return Unauthorized("Invalid username or password.");
         }
         var token = _tokenService.CreateToken(user);
+        return Ok(new { token });
 
-        return Ok(new { token});
+        //return Ok(user);
     }
 
 }

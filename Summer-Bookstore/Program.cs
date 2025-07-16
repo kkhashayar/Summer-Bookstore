@@ -37,7 +37,7 @@ builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegisterMap
 
 // Registering JwSettings 
 // This tells .NET to look inside appsettings.json for a section called "JwtSettings" and bind it to JwSettings class.
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwSettings"));
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 // Registering TokenService 
 builder.Services.AddScoped<ITokenService, TokenService>();

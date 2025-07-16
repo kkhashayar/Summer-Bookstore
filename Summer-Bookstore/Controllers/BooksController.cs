@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore.DTOs;
@@ -6,6 +7,7 @@ using Summer_Bookstore_Domain.Entities;
 namespace Summer_Bookstore.Controllers;
 
 
+[Authorize]
 
 [ApiController]
 [Route("api/[controller]")]
@@ -87,6 +89,7 @@ public class BooksController : ControllerBase
     /// <param name="bookCreateDto">The book details to create.</param>
     /// <returns>Returns 201 Created with location header if successful, 400 Bad Request if input is invalid.</returns>
     [HttpPost()]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AddNewBook([FromBody] BookCreateDto bookcreateDto)
     {
         if (!ModelState.IsValid)
