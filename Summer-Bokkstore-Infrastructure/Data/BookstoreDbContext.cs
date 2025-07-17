@@ -43,6 +43,14 @@ public class BookstoreDbContext : DbContext
             .HasColumnType("date"); // This will store only the date part without time  
 
 
+        // User entity configuration
+        modelBuilder.Entity<User>()
+            .HasKey(u => u.Id);
+        modelBuilder.Entity<User>()
+            .Property(u => u.PasswordHash)
+            .IsRequired(false); // I dont know why using migration did not set it to nullable, so I set it here
+
+
 
 
         // Seeding 
