@@ -140,6 +140,7 @@ public class BooksController : ControllerBase
     /// <param name="id">The ID of the book to delete.</param>
     /// <returns>Returns 204 No Content if successful, or 404 Not Found if the book doesn't exist.</returns>
     [HttpDelete("id")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteBook(int id)
     {
         if (id <= 0)

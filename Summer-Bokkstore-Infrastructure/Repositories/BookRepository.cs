@@ -65,9 +65,11 @@ public class BookRepository : IBookRepository
         if (book is null)
             throw new ArgumentNullException(nameof(book), "Book object cannot be null.");
 
-        var authorName = book.Author?.Name?.Trim();
-        if (string.IsNullOrWhiteSpace(authorName))
+        if (book.Author == null || book.Author.Name == null || string.IsNullOrWhiteSpace(book.Author.Name.Trim()))
             throw new InvalidOperationException("Author name is required.");
+
+        var authorName = book.Author.Name.Trim();
+
 
         // Check if the exact book with same author already exists
         var existingBook = await _bookContext.Books

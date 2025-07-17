@@ -30,7 +30,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 // to 'System.Action<AutoMapper.IMapperConfigurationExpression>'
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(BookMappers).Assembly); });
 builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(AuthorMappers).Assembly); });
-builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegisterMappers).Assembly); });
+builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegAndReadMappers).Assembly); });
 
 // Above code I am not sure if only one mapper assembly would be enough! 
 

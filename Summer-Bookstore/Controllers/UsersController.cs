@@ -62,4 +62,20 @@ public class UsersController : ControllerBase
         //return Ok(user);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsersAsync()
+    {
+        var response = await _userService.GetAllUsersAsync();
+        if (response.Count == 0)
+        {
+            _logger.LogInformation("No users found in the system.");
+            return NotFound("No users found.");
+        }
+        var usersToReturn = _mapper.Map<List<UserReadDto>>(response);   
+        return Ok(usersToReturn);
+    }
+
+
+
+
 }

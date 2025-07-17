@@ -5,7 +5,7 @@ using Summer_Bookstore_Domain.Entities;
 
 namespace Summer_Bookstore.Mappers;
 
-public class UserRegisterMappers
+public class UserRegAndReadMappers
 {
     public class UserMappers : Profile
     {
@@ -18,7 +18,10 @@ public class UserRegisterMappers
             //    .ReverseMap();
 
             CreateMap<UserRegisterDto,User>()
-                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();    // Have to try this`
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();    // Have to try this
+
+
+            CreateMap<User, UserReadDto>();
         }
     }
 }
