@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Summer_Bookstore.Application.DTOs;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Domain.Enums;
 using Summer_Bookstore_Infrastructure.Data;
@@ -87,5 +88,15 @@ public class UserService : IUserService
     {
         using var sha256 = SHA256.Create();
         return sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+    }
+
+    public Task<UserReadDto> UpdateUserByUsernameAsync(UserReadDto userReadDto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<int> DeleteUserByUsername(UserReadDto userReadDto)
+    {
+        throw new NotImplementedException();
     }
 }
