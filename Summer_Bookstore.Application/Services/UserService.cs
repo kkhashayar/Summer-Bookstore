@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.Logging;
 using Summer_Bookstore.Application.DTOs;
 using Summer_Bookstore_Domain.Entities;
@@ -16,22 +17,22 @@ public class UserService : IUserService
     public UserService(BookstoreDbContext context, ILogger<UserService> logger)
     {
         _context = context;
-         _logger = logger;
+        _logger = logger;
     }
-   
+
 
     public async Task<User> LoginAsync(string username, string password)
     {
-        var passwordHash = HashPassword(password);  
+        var passwordHash = HashPassword(password);
         var userByUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if(userByUsername is null)
+        if (userByUsername is null)
         {
             _logger.LogWarning("User with username {Username} not found.", username);
             throw new InvalidOperationException($"User with username {username} not found."); // Not sure about this, I guess it is better to back something like service response object
         }
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.PasswordHash.SequenceEqual(passwordHash));    
-        if(user is null)
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.PasswordHash.SequenceEqual(passwordHash));
+        if (user is null)
         {
             _logger.LogWarning($"Something went wrong while trying to login with{username} {password} at {DateTime.Now}");
             throw new InvalidOperationException($"Username or password is wrong");
@@ -73,14 +74,48 @@ public class UserService : IUserService
 
     public async Task<List<User>> GetAllUsersAsync()
     {
-        var result = await _context.Users.ToListAsync();    
-        if(result.Count == 0)
+        var result = await _context.Users.ToListAsync();
+        if (result.Count == 0)
         {
             return new List<User>(); // Return an empty list if no users are found  
         }
 
-        return result;  
+        return result;
     }
+
+    public async Task<UserReadDto?> UpdateUserByUsernameAsync(UserLoginDto login, UserUpdateDto update)
+    {
+        var passwordHash = HashPassword(login.Password);
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == login.Username && u.PasswordHash == passwordHash);
+
+        // Still thinking that service response object would be better than throwing an exception
+        if (user == null)
+        {
+            _logger.LogWarning("User {Username} not found.", login.Username);
+            return null; // Let the controller return 404
+        }
+
+        if (string.IsNullOrWhiteSpace(update.Username))
+            throw new ArgumentException("New username cannot be empty.");
+
+        user.Username = update.Username;
+        user.Role = update.Role;
+        user.PasswordHash = HashPassword(update.Password);
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+
+        return new UserReadDto { Username = user.Username, Role = user.Role };
+    }
+
+
+
+    public Task<int> DeleteUserByUsername(UserLoginDto userLoginDto)
+    {
+        throw new NotImplementedException();
+    }
+
 
     // Using the SHA256 algorithm to hash the password, also each time user tries to login,
     // we will hash the password and compare it with the stored hash in the database.
@@ -89,14 +124,5 @@ public class UserService : IUserService
         using var sha256 = SHA256.Create();
         return sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
     }
-
-    public Task<UserReadDto> UpdateUserByUsernameAsync(UserReadDto userReadDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<int> DeleteUserByUsername(UserReadDto userReadDto)
-    {
-        throw new NotImplementedException();
-    }
 }
+

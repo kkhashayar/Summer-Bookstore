@@ -8,7 +8,6 @@ namespace Summer_Bookstore.Controllers;
 
 
 [Authorize]
-
 [ApiController]
 [Route("api/[controller]")]
 public class BooksController : ControllerBase
