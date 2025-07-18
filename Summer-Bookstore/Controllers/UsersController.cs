@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Summer_Bookstore.Application.DTOs;
 using Summer_Bookstore.Application.Services;
@@ -6,7 +7,7 @@ using Summer_Bookstore_Domain.Entities;
 
 namespace Summer_Bookstore.Controllers;
 
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
@@ -26,6 +27,7 @@ public class UsersController : ControllerBase
 
 
     [HttpPost("register")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterDto userRegisterDto)
     {
         if (!ModelState.IsValid)
@@ -44,7 +46,9 @@ public class UsersController : ControllerBase
         return Ok(user.Id);
     }
 
+    
     [HttpPost("Login")]
+    [AllowAnonymous]
     public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLoginDto)
     {
         if (!ModelState.IsValid)
@@ -62,7 +66,36 @@ public class UsersController : ControllerBase
         //return Ok(user);
     }
 
+    
+    [HttpPut("UpdateUser")]
+    [Authorize(Roles = "Admin")]   
+    public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdateRequestDto requestDto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var updatedUser = await _userService.UpdateUserByUsernameAsync(requestDto.UserLogin, requestDto.UserUpdate);
+            if (updatedUser == null)
+                return NotFound("User not found.");
+
+            return Ok(updatedUser);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error updating user.");
+            return StatusCode(500, "An unexpected error occurred.");
+        }
+    }
+
+
     [HttpGet]
+    [Authorize(Roles = "Admin")]    
     public async Task<IActionResult> GetAllUsersAsync()
     {
         var response = await _userService.GetAllUsersAsync();
@@ -74,8 +107,4 @@ public class UsersController : ControllerBase
         var usersToReturn = _mapper.Map<List<UserReadDto>>(response);   
         return Ok(usersToReturn);
     }
-
-
-
-
 }

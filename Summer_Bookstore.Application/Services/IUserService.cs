@@ -10,4 +10,7 @@ public interface IUserService
     Task<User> LoginAsync(string username, string password);
     Task<List<User>> GetAllUsersAsync();    
 
+    Task<UserReadDto> UpdateUserByUsernameAsync(UserLoginDto userLoginDto, UserUpdateDto userUpdateDto);
+    Task<int> DeleteUserByUsername(UserLoginDto userLoginDto);
+
 }
