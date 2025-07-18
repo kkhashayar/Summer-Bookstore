@@ -145,7 +145,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+else
+{
+    app.UseHsts();  // Enforces strict HTTPS usage for production
+}
+
+app.UseHttpsRedirection(); // Ensures HTTP requests are redirected to HTTPS.
 
 app.UseAuthentication();
 app.UseAuthorization();
