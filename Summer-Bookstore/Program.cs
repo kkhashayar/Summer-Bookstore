@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Summer_Bokkstore_Infrastructure.Interfaces;
@@ -62,8 +63,14 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 //    });
 
 // Register and bind JWT settings when secrets are in appsettings.Development.json
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
+// builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
+
+// After removing everything from appsettings.Development.json 
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() 
+    ?? throw new InvalidOperationException("JWT settings  missing");
+
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -80,6 +87,7 @@ builder.Services.AddAuthentication("Bearer")
                 Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
         };
     });
+
 
 
 // Role based plicies: 
