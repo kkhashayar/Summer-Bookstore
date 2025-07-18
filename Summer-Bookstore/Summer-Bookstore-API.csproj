@@ -5,7 +5,8 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Summer_Bookstore</RootNamespace>
-	</PropertyGroup>
+	  <UserSecretsId>635df112-4ddf-4311-9d97-f627a2cf3faa</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="15.0.0" />
