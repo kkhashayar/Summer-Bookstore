@@ -1,11 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore.Application.Services;
 using Summer_Bookstore.Application.Settings;
 using Summer_Bookstore.Mappers;
 using Summer_Bookstore_Infrastructure.Data;
 using Summer_Bookstore_Infrastructure.Repositories;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
@@ -71,7 +72,40 @@ builder.Services.AddAuthorization(options =>
 // Controllers asnd swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+
+// Configure Swagger to use JWT Authentication
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Summer bookstore", Version = "v1" });
+
+    // JWT Authentication
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' followed by your token without quotes. Example: Bearer eyJhbGciOiJIUzI1NiIs..."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 
 var app = builder.Build();
 
