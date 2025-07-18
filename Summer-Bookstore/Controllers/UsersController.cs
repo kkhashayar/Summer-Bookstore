@@ -27,6 +27,7 @@ public class UsersController : ControllerBase
 
 
     [HttpPost("register")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterDto userRegisterDto)
     {
         if (!ModelState.IsValid)
@@ -45,7 +46,9 @@ public class UsersController : ControllerBase
         return Ok(user.Id);
     }
 
+    
     [HttpPost("Login")]
+    [AllowAnonymous]
     public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLoginDto)
     {
         if (!ModelState.IsValid)
@@ -63,8 +66,9 @@ public class UsersController : ControllerBase
         //return Ok(user);
     }
 
-    [Authorize(Roles = "Admin")]
+    
     [HttpPut("UpdateUser")]
+    [Authorize(Roles = "Admin")]   
     public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdateRequestDto requestDto)
     {
         if (!ModelState.IsValid)
@@ -91,6 +95,7 @@ public class UsersController : ControllerBase
 
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]    
     public async Task<IActionResult> GetAllUsersAsync()
     {
         var response = await _userService.GetAllUsersAsync();
@@ -102,8 +107,4 @@ public class UsersController : ControllerBase
         var usersToReturn = _mapper.Map<List<UserReadDto>>(response);   
         return Ok(usersToReturn);
     }
-
-
-
-
 }

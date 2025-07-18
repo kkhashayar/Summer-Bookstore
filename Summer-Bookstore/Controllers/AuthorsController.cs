@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Summer_Bookstore.DTOs;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Summer_Bookstore.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthorsController : ControllerBase
@@ -28,7 +29,9 @@ public class AuthorsController : ControllerBase
     /// <param name="id">The ID of the author.</param>
     /// <returns>200 OK with author data if found, otherwise 404 Not Found.</returns>
     /// Will keep this actionmethod only for admins
+    
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")] 
     public async Task<IActionResult> GetAuthorById(int id)
     {
         var author = await _authorRepository.GetByIdAsync(id);
@@ -46,6 +49,7 @@ public class AuthorsController : ControllerBase
     /// </summary>
     /// <param name="name">The name of the author.</param>
     /// <returns>200 OK with author data if found, otherwise 404 Not Found.</returns>
+    [AllowAnonymous]
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetAuthorByName(string name)
     {
@@ -64,6 +68,7 @@ public class AuthorsController : ControllerBase
     /// Retrieves all authors.
     /// </summary>
     /// <returns>200 OK with list of authors or 404 if none are found.</returns>
+    [AllowAnonymous]
     [HttpGet()]
     public async Task<IActionResult> GetAllAuthors()
     {
@@ -84,6 +89,7 @@ public class AuthorsController : ControllerBase
     /// <param name="authorCreateDto">The new author data.</param>
     /// <returns>201 Created if successful, or 400 Bad Request on failure.</returns>
     [HttpPost()]
+    [Authorize(Roles = "Admin")]    
     public async Task<IActionResult> AddNewAuthor([FromBody] AuthorCreateDto authorcreateDto)
     {
         if (!ModelState.IsValid)
@@ -109,6 +115,7 @@ public class AuthorsController : ControllerBase
     /// <param name="authorUpdateDto">The updated author data including ID.</param>
     /// <returns>204 No Content if successful, or 400/404 on failure.</returns>
     [HttpPut]
+    [Authorize(Roles = "Admin")]    
     public async Task<IActionResult> Update([FromBody] AuthorUpdateDto authorUpdateDto)
     {
         if (!ModelState.IsValid)
@@ -133,6 +140,7 @@ public class AuthorsController : ControllerBase
     /// <param name="id">The ID of the author to delete.</param>
     /// <returns>204 No Content if successful, or 404 if not found.</returns>
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]    
     public async Task<IActionResult> DeleteAuthor(int id)
     {
         if (id <= 0)

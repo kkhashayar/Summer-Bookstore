@@ -30,6 +30,7 @@ public class BooksController : ControllerBase
     /// <param name="id">The ID of the book.</param>
     /// <returns>Returns 200 OK with the book if found, otherwise 404 Not Found.</returns>
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")] 
     public async Task<IActionResult> GetBookById(int id)
     {
         // Connected directly to book repository 
@@ -49,6 +50,7 @@ public class BooksController : ControllerBase
     /// <param name="title">The title of the book.</param>
     /// <returns>Returns 200 OK with the book if found, otherwise 404 Not Found.</returns>
     [HttpGet("title/{title}")]
+    [AllowAnonymous] // Allow anonymous access to this endpoint
     public async Task<IActionResult> GetBookByTitle(string title)
     {
         // Connected directly to book repository 
@@ -67,6 +69,7 @@ public class BooksController : ControllerBase
     /// </summary>
     /// <returns>Returns 200 OK with a list of books, or 404 if none are found.</returns>
     [HttpGet()]
+    [AllowAnonymous] // Allow anonymous access to this endpoint
     public async Task<IActionResult> GetAllBooks()
     {
         // Connected directly to book repository 
@@ -115,6 +118,7 @@ public class BooksController : ControllerBase
     /// <param name="bookUpdateDto">The updated book data.</param>
     /// <returns>Returns 204 No Content if successful, 400 Bad Request for ID mismatch, or 404 Not Found if book doesn't exist.</returns>
     [HttpPut()]
+    [Authorize(Roles = "Admin")]    
     public async Task<IActionResult> UpdateBook([FromBody] BookUpdateDto bookupdateDto)
     {
         if (!ModelState.IsValid)
