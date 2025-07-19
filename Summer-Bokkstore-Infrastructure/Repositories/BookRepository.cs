@@ -34,13 +34,7 @@ public class BookRepository : IBookRepository
 
     public async Task<Book> GetByIdAsync(int id)
     {
-        var user = _httpContextAccessor.HttpContext?.User;
-        string username = "Unknown";
-        if (user != null && user.Identity != null && user.Identity.Name != null)
-        {
-            username = user.Identity.Name;
-        }
-
+        string username = GetUser();
 
         var result = await _bookContext.Books.FindAsync(id);
         if (result == null)
@@ -59,9 +53,11 @@ public class BookRepository : IBookRepository
         return result;
     }
 
-
+ 
     public async Task<Book> GetByTitleAsync(string title)
     {
+        string username = GetUser();
+
         var result = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == title);
         if (result == null)
         {
@@ -165,15 +161,6 @@ public class BookRepository : IBookRepository
         return await _bookContext.SaveChangesAsync();
     }
 
-    private static void UpdateBookproperties(Book book, Book bookToUpdate)
-    {
-        bookToUpdate.Title = book.Title;
-        bookToUpdate.Description = book.Description;
-        bookToUpdate.PublishedDate = book.PublishedDate;
-        bookToUpdate.Author = book.Author; // Update the navigation property if needed
-    }
-
-
     public async Task<int> Delete(int id)
     {
         var bookToDelete = await _bookContext.Books.FirstOrDefaultAsync(b => b.Id == id);
@@ -189,6 +176,28 @@ public class BookRepository : IBookRepository
     {
         return await _bookContext.SaveChangesAsync();
     }
+
+    private static void UpdateBookproperties(Book book, Book bookToUpdate)
+    {
+        bookToUpdate.Title = book.Title;
+        bookToUpdate.Description = book.Description;
+        bookToUpdate.PublishedDate = book.PublishedDate;
+        bookToUpdate.Author = book.Author; // Update the navigation property if needed
+    }
+
+    private string GetUser()
+    {
+        var user = _httpContextAccessor.HttpContext?.User;
+        string username = "Unknown";
+        if (user != null && user.Identity != null && user.Identity.Name != null)
+        {
+            username = user.Identity.Name;
+        }
+
+        return username;
+    }
+
+    
 
 
 }
