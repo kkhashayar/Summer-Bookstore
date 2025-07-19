@@ -1,7 +1,9 @@
 ﻿
 using Azure.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Data;
@@ -15,30 +17,48 @@ public class BookRepository : IBookRepository
     private readonly BookstoreDbContext _bookContext;
     private readonly ILogger<BookRepository> _logger;
     readonly AuditLogger _auditLogger;
+    readonly IHttpContextAccessor _httpContextAccessor;
 
-    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger, AuditLogger auditLogger)
+    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger, AuditLogger auditLogger, IHttpContextAccessor httpContextAccessor )
     {
+        _httpContextAccessor = httpContextAccessor;
         _auditLogger = auditLogger;
         _bookContext = bookContext;
         _logger = logger;
     }
-    
-    
+
+
     // One thing to consider is whether or not we should include author information.
     // We could add a flag like `bool includeAuthor` and use it to conditionally include the author.
     // Leaving it out for the sake of simplicity for now.
 
     public async Task<Book> GetByIdAsync(int id)
     {
-        
+        var user = _httpContextAccessor.HttpContext?.User;
+        string username = "Unknown";
+        if (user != null && user.Identity != null && user.Identity.Name != null)
+        {
+            username = user.Identity.Name;
+        }
+
+
         var result = await _bookContext.Books.FindAsync(id);
         if (result == null)
         {
-            _logger.LogWarning($"Book with ID {id} not found at: {DateTime.Now}.");
-            return null; ; // This will return null if not found, which is fine for this case.
+            var message = $"Book with id: {id} not found";
+            _logger.LogWarning(message);
+            await _auditLogger.LogAsync(message, LogType.Warning, new User { Username = username });
         }
+        else
+        {
+            var message = $"Book with id: {id} retrieved successfully.";
+            _logger.LogInformation(message);
+            await _auditLogger.LogAsync(message, LogType.Information, new User { Username = username });
+        }
+
         return result;
     }
+
 
     public async Task<Book> GetByTitleAsync(string title)
     {

@@ -10,8 +10,6 @@ public class AuditEntry
     public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
     public LogType LogType { get; set; } = LogType.Information;   
     public string? Message { get; set; }
-
-    public int UserId { get; set; }
-    public User? User { get; set; }
+    public string? Username { get; set; }
 
 }

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Data;
 
@@ -16,12 +17,17 @@ public class AuditLogger
 
     public async Task LogAsync(string message, LogType logType = LogType.Information, User? user = null)
     {
+        User? existingUser = null;
+        if (!string.IsNullOrEmpty(user.Username))
+        {
+            existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == user.Username);
+        }
         var entry = new AuditEntry
         {
             Message = message,
             LogType = logType,
             TimeStamp = DateTime.UtcNow,
-            User = user
+            Username = existingUser?.Username ?? "Unknown"
 
         };  
 

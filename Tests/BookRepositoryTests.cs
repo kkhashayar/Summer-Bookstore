@@ -1,9 +1,11 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Data;
+using Summer_Bookstore_Infrastructure.EventLogs;
 using Summer_Bookstore_Infrastructure.Repositories;
 
 namespace Tests;
@@ -86,7 +88,9 @@ public class BookRepositoryTests
 
         var context = new BookstoreDbContext(options);
         var logger = new Mock<ILogger<BookRepository>>().Object;
-        var repo = new BookRepository(context, logger);
+        var auditLogger = new Mock<AuditLogger>(context).Object;
+        var httpContextAccessor = new Mock<IHttpContextAccessor>().Object;
+        var repo = new BookRepository(context, logger, auditLogger, httpContextAccessor);
 
         return (repo, context);
     }
