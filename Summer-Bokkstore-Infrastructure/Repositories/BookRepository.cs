@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Summer_Bokkstore_Infrastructure.Interfaces;
 using Summer_Bookstore_Domain.Entities;
 using Summer_Bookstore_Infrastructure.Data;
+using Summer_Bookstore_Infrastructure.EventLogs;
 
 namespace Summer_Bookstore_Infrastructure.Repositories;
 
@@ -13,19 +14,23 @@ public class BookRepository : IBookRepository
 
     private readonly BookstoreDbContext _bookContext;
     private readonly ILogger<BookRepository> _logger;
+    readonly AuditLogger _auditLogger;
 
-    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger)
+    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger, AuditLogger auditLogger)
     {
-
+        _auditLogger = auditLogger;
         _bookContext = bookContext;
         _logger = logger;
     }
+    
+    
     // One thing to consider is whether or not we should include author information.
     // We could add a flag like `bool includeAuthor` and use it to conditionally include the author.
     // Leaving it out for the sake of simplicity for now.
 
     public async Task<Book> GetByIdAsync(int id)
     {
+        
         var result = await _bookContext.Books.FindAsync(id);
         if (result == null)
         {
