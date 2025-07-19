@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Summer-Bookstore-Domain\Summer-Bookstore-Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Loggs\" />
-  </ItemGroup>
-
 </Project>
