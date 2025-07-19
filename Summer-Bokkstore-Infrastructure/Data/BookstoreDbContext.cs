@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Summer_Bookstore_Domain.Entities;
+using Summer_Bookstore_Infrastructure.EventLogs;
 using System.Data.Common;
 
 namespace Summer_Bookstore_Infrastructure.Data;
@@ -14,6 +15,8 @@ public class BookstoreDbContext : DbContext
     public DbSet<Author> Authors { get; set; } = null!;
 
     public DbSet<User> Users { get; set; }
+
+    public DbSet<AuditEntry> AuditEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
