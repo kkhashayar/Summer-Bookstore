@@ -19,7 +19,7 @@ public class BookRepository : IBookRepository
     readonly AuditLogger _auditLogger;
     readonly IHttpContextAccessor _httpContextAccessor;
 
-    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger, AuditLogger auditLogger, IHttpContextAccessor httpContextAccessor )
+    public BookRepository(BookstoreDbContext bookContext, ILogger<BookRepository> logger, AuditLogger auditLogger, IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
         _auditLogger = auditLogger;
@@ -53,7 +53,7 @@ public class BookRepository : IBookRepository
         return result;
     }
 
- 
+
     public async Task<Book> GetByTitleAsync(string title)
     {
         string username = GetUser();
@@ -61,14 +61,23 @@ public class BookRepository : IBookRepository
         var result = await _bookContext.Books.FirstOrDefaultAsync(b => b.Title == title);
         if (result == null)
         {
-            _logger.LogWarning($"Book with title '{title}' not found at: {DateTime.Now}.");
-            return result; // This will return null if not found, which is fine for this case.
+            var message = $"Book with title '{title}' not found.";
+            _logger.LogWarning(message);
+            await _auditLogger.LogAsync(message, LogType.Warning, new User { Username = username });
+
+        }
+        else
+        {
+            var message = $"Book with id: {title} retrieved successfully.";
+            _logger.LogInformation(message);
+            await _auditLogger.LogAsync(message, LogType.Information, new User { Username = username });
         }
         return result;
     }
 
     public async Task<List<Book>> GetAllBooksAsync()
     {
+        var user = GetUser();
         var result = await _bookContext.Books.ToListAsync();
         if (result.Count == 0)
         {
@@ -83,24 +92,24 @@ public class BookRepository : IBookRepository
     // Initially I went with Unit of work but I think it would be overkill for this simple repository pattern.
     public async Task<int> AddAsync(Book book)
     {
-        if (book is null)
-            throw new ArgumentNullException(nameof(book), "Book object cannot be null.");
+        var username = GetUser();
 
+        if (book is null)
+        {
+            var message = "Received null book object.";
+            await _auditLogger.LogAsync(message, LogType.Error, new User { Username = username });
+            throw new ArgumentNullException(nameof(book), "Book object cannot be null.");
+        }
+
+        // Validate author presence and name
         if (book.Author == null || book.Author.Name == null || string.IsNullOrWhiteSpace(book.Author.Name.Trim()))
-            throw new InvalidOperationException("Author name is required.");
+        {
+            var message = "Author name is required.";
+            await _auditLogger.LogAsync(message, LogType.Error, new User { Username = username });
+            throw new InvalidOperationException(message);
+        }
 
         var authorName = book.Author.Name.Trim();
-
-
-        // Check if the exact book with same author already exists
-        var existingBook = await _bookContext.Books
-            .FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == book.AuthorId);
-
-        if (existingBook != null)
-        {
-            _logger.LogWarning($"Book '{book.Title}' by '{authorName}' already exists at: {DateTime.Now}.");
-            return 0; // No insertion
-        }
 
         // Try to find existing author
         var author = await _bookContext.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
@@ -109,6 +118,21 @@ public class BookRepository : IBookRepository
             author = new Author { Name = authorName };
             await _bookContext.Authors.AddAsync(author);
             await _bookContext.SaveChangesAsync(); // Ensure Author ID is generated
+
+            var authorMessage = $"New author '{authorName}' added.";
+            await _auditLogger.LogAsync(authorMessage, LogType.Information, new User { Username = username });
+        }
+
+        // Check if book with same title AND author already exists
+        var duplicateBook = await _bookContext.Books
+            .FirstOrDefaultAsync(b => b.Title == book.Title && b.AuthorId == author.Id);
+
+        if (duplicateBook != null)
+        {
+            var message = $"Duplicate book detected: '{book.Title}' by '{authorName}' already exists.";
+            _logger.LogWarning(message);
+            await _auditLogger.LogAsync(message, LogType.Warning, new User { Username = username });
+            return 0;
         }
 
         // Set the correct author ID and avoid re-adding author
@@ -116,31 +140,41 @@ public class BookRepository : IBookRepository
         book.Author = null;
 
         await _bookContext.Books.AddAsync(book);
-        return await _bookContext.SaveChangesAsync();
+        var result = await _bookContext.SaveChangesAsync();
+
+        var successMessage = $"Book '{book.Title}' by '{authorName}' added successfully by user '{username}' at {DateTime.UtcNow}.";
+        await _auditLogger.LogAsync(successMessage, LogType.Information, new User { Username = username });
+
+        return result;
     }
 
 
 
     public async Task<int> Update(Book book)
     {
+        var username = GetUser(); // Retrieve current username for audit logging
+
+        // Check if the book exists
         var bookToUpdate = await _bookContext.Books.FirstOrDefaultAsync(b => b.Id == book.Id);
         if (bookToUpdate is null)
         {
-            _logger.LogInformation($"book with id: {book.Id} not found at: {DateTime.Now}");
+            _logger.LogWarning($"Book with id: {book.Id} not found at: {DateTime.UtcNow}.");
+            await _auditLogger.LogAsync($"Book with id: {book.Id} not found", LogType.Warning, new User { Username = username });
             return 0; // Return 0 if book not found
         }
-        string authorName = "";
 
-        if (!string.IsNullOrEmpty(book.Author.Name))
+        // Extract and trim the author's name
+        var authorName = book.Author?.Name?.Trim();
+        if (string.IsNullOrWhiteSpace(authorName))
         {
-            authorName = book.Author.Name.Trim();
-        }
-        else
-        {
-            authorName = book.Author.Name;
+            _logger.LogWarning("Author name is missing or empty during update.");
+            await _auditLogger.LogAsync("Author name is missing or empty during update", LogType.Warning, new User { Username = username });
+            throw new InvalidOperationException("Author name is required.");
         }
 
-        var existingAuthor = await _bookContext.Authors.FirstOrDefaultAsync(a => a.Name.ToLower() == authorName.ToLower());
+        // Check if author already exists
+        var existingAuthor = await _bookContext.Authors
+            .FirstOrDefaultAsync(a => a.Name.ToLower() == authorName.ToLower());
 
         // If we can't find the author we have to create a new one 
         if (existingAuthor is null)
@@ -155,23 +189,42 @@ public class BookRepository : IBookRepository
             bookToUpdate.AuthorId = existingAuthor.Id; // Set the AuthorId for the book
         }
 
-        UpdateBookproperties(book, bookToUpdate);
+        UpdateBookproperties(book, bookToUpdate); // Apply new values to the book
 
         _bookContext.Books.Update(bookToUpdate); // Mark the book as modified
-        return await _bookContext.SaveChangesAsync();
+        var result = await _bookContext.SaveChangesAsync();
+
+        _logger.LogInformation($"Book with ID {book.Id} updated successfully by {username} at {DateTime.UtcNow}.");
+        await _auditLogger.LogAsync($"Book with ID {book.Id} updated successfully", LogType.Information, new User { Username = username });
+
+        return result;
     }
+
 
     public async Task<int> Delete(int id)
     {
+        var username = GetUser(); // Retrieve current username for audit logging
+
+        // Try to find the book by ID
         var bookToDelete = await _bookContext.Books.FirstOrDefaultAsync(b => b.Id == id);
         if (bookToDelete is null)
         {
-            _logger.LogInformation($"book with id: {id} not found at: {DateTime.Now}");
+            var message = $"Book with id: {id} not found at: {DateTime.UtcNow}";
+            _logger.LogWarning(message);
+            await _auditLogger.LogAsync(message, LogType.Warning, new User { Username = username });
             return 0;
         }
-        _bookContext.Remove(bookToDelete);
-        return await SaveChangesAsync();
+
+        _bookContext.Remove(bookToDelete); // Remove the book from the context
+
+        var result = await SaveChangesAsync(); // Save the changes to the database
+
+        _logger.LogInformation($"Book with ID {id} deleted successfully by {username} at {DateTime.UtcNow}.");
+        await _auditLogger.LogAsync($"Book with ID {id} deleted successfully", LogType.Information, new User { Username = username });
+
+        return result;
     }
+
     public async Task<int> SaveChangesAsync()
     {
         return await _bookContext.SaveChangesAsync();
@@ -197,7 +250,7 @@ public class BookRepository : IBookRepository
         return username;
     }
 
-    
+
 
 
 }
