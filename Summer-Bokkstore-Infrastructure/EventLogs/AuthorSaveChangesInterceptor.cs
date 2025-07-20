@@ -2,18 +2,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Summer_Bookstore_Domain.Entities;
+using Summer_Bookstore_Infrastructure.Data;
 using Summer_Bookstore_Infrastructure.EventLogs;
 
 public class AuthorSaveChangesInterceptor : SaveChangesInterceptor
 {
-    private readonly AuditLogger _auditLogger;
-    readonly IHttpContextAccessor _httpContextAccessor;
+    //private readonly AuditLogger _auditLogger;
+    //readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthorSaveChangesInterceptor(AuditLogger auditLogger, IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-        _auditLogger = auditLogger;
-    }
+    //public AuthorSaveChangesInterceptor(AuditLogger auditLogger, IHttpContextAccessor httpContextAccessor)
+    //{
+    //    _httpContextAccessor = httpContextAccessor;
+    //    _auditLogger = auditLogger;
+    //}
 
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
@@ -21,18 +22,34 @@ public class AuthorSaveChangesInterceptor : SaveChangesInterceptor
         CancellationToken cancellationToken = default)
     {
         var context = eventData.Context;
-        if (context == null) return await base.SavingChangesAsync(eventData, result, cancellationToken);
 
-        string username = "Unknown User";
-
-        if (_httpContextAccessor.HttpContext != null &&
-            _httpContextAccessor.HttpContext.User != null &&
-            _httpContextAccessor.HttpContext.User.Identity != null &&
-            _httpContextAccessor.HttpContext.User.Identity.Name != null)
+        // Skip if we're saving AuditEntry itself, to prevent recursion
+        if (context?.ChangeTracker?.Entries<AuditEntry>().Any() == true &&
+        context.ChangeTracker.Entries().All(e => e.Entity is AuditEntry))
         {
-            username = _httpContextAccessor.HttpContext.User.Identity.Name;
+            return await base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
+        // Manually getting the username from ClaimsPrincipal if available if not will set it to "Unknown User" 
+        string username = "Unknown User";
+
+        var httpContext = new HttpContextAccessor().HttpContext;   
+
+        if(httpContext is not null)
+        {
+            var user = httpContext.User;
+            if(user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                username = user.Identity.Name;  
+            }
+        }
+
+        // Creating temporary context 
+        var options = new DbContextOptionsBuilder<BookstoreDbContext>()
+            .UseSqlServer("Server=localhost;Database=Summer_Bookstore_Db;Trusted_Connection=True;TrustServerCertificate=True;")
+            .Options;
+
+        await using var auditContext = new BookstoreDbContext(options); 
 
         foreach (var entry in context.ChangeTracker.Entries<Author>())
         {
@@ -52,7 +69,17 @@ public class AuthorSaveChangesInterceptor : SaveChangesInterceptor
 
             if (!string.IsNullOrEmpty(message))
             {
-                await _auditLogger.LogAsync(message, LogType.Information, new User { Username = username});
+                // Log directly to database using the new context
+                var audit = new AuditEntry
+                {
+                    LogType = LogType.Information,
+                    Message = message,  
+                    Username = username,
+                    TimeStamp = DateTime.UtcNow
+
+                };
+                await auditContext.AuditEntries.AddAsync(audit, cancellationToken);
+                await auditContext.SaveChangesAsync(cancellationToken);
             }
         }
 

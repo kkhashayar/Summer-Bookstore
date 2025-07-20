@@ -101,23 +101,28 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 });
 
+// Looks like this should be added before DbContext registration
+builder.Services.AddScoped<AuthorSaveChangesInterceptor>();
+
+// To get user information in repository
+builder.Services.AddHttpContextAccessor();
 
 // Author save changes interceptor
 builder.Services.AddDbContext<BookstoreDbContext>((serviceProvider, options) =>
 {
+    // This caused infinite loop, :| 
     var interceptor = serviceProvider.GetRequiredService<AuthorSaveChangesInterceptor>();
     options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .AddInterceptors(interceptor);
 });
-builder.Services.AddScoped<AuthorSaveChangesInterceptor>();
+
 
 // Controllers asnd swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// To get user information in repository
-builder.Services.AddHttpContextAccessor(); 
+
 
 // Configure Swagger to use JWT Authentication
 builder.Services.AddSwaggerGen(c =>
