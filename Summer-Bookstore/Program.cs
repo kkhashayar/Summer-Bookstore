@@ -94,7 +94,7 @@ builder.Services.AddAuthentication("Bearer")
 
 
 
-// Role based plicies: 
+// Role based Policies: 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
