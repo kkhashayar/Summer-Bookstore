@@ -7,6 +7,7 @@ using Summer_Bookstore.Application.Services;
 using Summer_Bookstore.Application.Settings;
 using Summer_Bookstore.Mappers;
 using Summer_Bookstore_Infrastructure.Data;
+using Summer_Bookstore_Infrastructure.EventLogs;
 using Summer_Bookstore_Infrastructure.Repositories;
 using System.Text;
 
@@ -36,6 +37,9 @@ builder.Services.AddAutoMapper(config => { config.AddMaps(typeof(UserRegAndReadM
 
 // Above code I am not sure if only one mapper assembly would be enough! 
 
+
+//registering AuditLogger
+builder.Services.AddScoped<AuditLogger>();  
 
 // Registering JwSettings 
 // This tells .NET to look inside appsettings.json for a section called "JwtSettings" and bind it to JwSettings class.
@@ -102,6 +106,8 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// To get user information in repository
+builder.Services.AddHttpContextAccessor(); 
 
 // Configure Swagger to use JWT Authentication
 builder.Services.AddSwaggerGen(c =>
@@ -158,3 +164,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

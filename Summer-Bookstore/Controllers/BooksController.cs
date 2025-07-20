@@ -49,6 +49,8 @@ public class BooksController : ControllerBase
     /// </summary>
     /// <param name="title">The title of the book.</param>
     /// <returns>Returns 200 OK with the book if found, otherwise 404 Not Found.</returns>
+    /// 
+
     [HttpGet("title/{title}")]
     [AllowAnonymous] // Allow anonymous access to this endpoint
     public async Task<IActionResult> GetBookByTitle(string title)
