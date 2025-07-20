@@ -102,6 +102,16 @@ builder.Services.AddAuthorization(options =>
 });
 
 
+// Author save changes interceptor
+builder.Services.AddDbContext<BookstoreDbContext>((serviceProvider, options) =>
+{
+    var interceptor = serviceProvider.GetRequiredService<AuthorSaveChangesInterceptor>();
+    options
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .AddInterceptors(interceptor);
+});
+builder.Services.AddScoped<AuthorSaveChangesInterceptor>();
+
 // Controllers asnd swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

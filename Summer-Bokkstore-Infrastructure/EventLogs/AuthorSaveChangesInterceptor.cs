@@ -52,7 +52,7 @@ public class AuthorSaveChangesInterceptor : SaveChangesInterceptor
 
             if (!string.IsNullOrEmpty(message))
             {
-                await _auditLogger.LogAsync(message, LogType.Information, );
+                await _auditLogger.LogAsync(message, LogType.Information, new User { Username = username});
             }
         }
 
