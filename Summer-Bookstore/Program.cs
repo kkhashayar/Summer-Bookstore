@@ -70,7 +70,6 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 // builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
-
 // After removing everything from appsettings.Development.json 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() 
     ?? throw new InvalidOperationException("JWT settings  missing");
