@@ -23,6 +23,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-EXPOSE 80
+ENV ASPNETCORE_HTTP_PORTS=5001
+# It was on 80 originally
+EXPOSE 5001 
 
 ENTRYPOINT ["dotnet", "Summer-Bookstore-API.dll"]
