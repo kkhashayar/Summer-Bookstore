@@ -70,7 +70,6 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 // builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
-
 // After removing everything from appsettings.Development.json 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() 
     ?? throw new InvalidOperationException("JWT settings  missing");
@@ -171,7 +170,7 @@ else
     app.UseHsts();  // Enforces strict HTTPS usage for production
 }
 
-app.UseHttpsRedirection(); // Ensures HTTP requests are redirected to HTTPS.
+//app.UseHttpsRedirection(); // Ensures HTTP requests are redirected to HTTPS.
 
 app.UseAuthentication();
 app.UseAuthorization();
